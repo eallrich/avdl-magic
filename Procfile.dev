@@ -1,0 +1,4 @@
+redis: bin/redis-server etc/redis.conf
+http: gunicorn app:app -w 3 -b 0.0.0.0:$PORT
+worker: bin/python worker.py
+
