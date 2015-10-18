@@ -22,6 +22,13 @@ Bootstrap(app)
 # RQ Queue
 q = Queue(connection=conn)
 
+# Make sure the directory exists
+try:
+    os.mkdir('downloads')
+except OSError:
+    # Already exists
+    pass
+
 def download(yturl):
     options = [
         'youtube-dl',
