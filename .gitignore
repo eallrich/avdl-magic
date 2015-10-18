@@ -1,0 +1,13 @@
+*.py[cod]
+*.swp
+
+# Virtualenv
+bin/
+include/
+lib/
+local/
+share/
+
+# Transient files
+downloads/
+
