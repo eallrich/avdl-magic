@@ -1,0 +1,35 @@
+{%- extends "base.html" %}
+
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+    <div class="container">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ utils.flashed_messages(messages) }}
+            </div>
+        </div>
+    {%- endif %}
+    {%- endwith %}
+
+        <p>There are {{ jobs|length }} downloads queued.</p>
+        <table class="table table-striped">
+            <thead><tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>URL</th>
+            </tr></thead>
+            <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td>{{ job.id }}</td>
+                    <td>{{ job.status }}</td>
+                    <td>{{ job.url }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%- endblock %}

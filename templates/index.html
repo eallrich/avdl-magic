@@ -1,0 +1,38 @@
+{%- extends "base.html" %}
+
+{% import "bootstrap/utils.html" as utils %}
+
+{% block content %}
+    <div class="container">
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ utils.flashed_messages(messages) }}
+            </div>
+        </div>
+    {%- endif %}
+    {%- endwith %}
+        <div class="jumbotron">
+            <form action="" method=post>
+                <p>Youtube URL:
+                    <input type=text name=yturl />
+                    <input type=submit value=Get! class="btn btn-lg btn-default"/>
+                </p>
+            </form>
+        </div>
+        <p>There are {{ available|length }} downloads available.</p>
+        <table class="table table-striped">
+            <thead><tr>
+                <th>Available Downloads</th>
+            </tr></thead>
+            <tbody>
+            {% for name,link in available %}
+                <tr>
+                    <td><a href="{{ link }}">{{ name }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{%- endblock %}
