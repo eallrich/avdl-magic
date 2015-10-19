@@ -78,7 +78,6 @@ def validate_url(url):
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
-    logger.info("%s %s" % (request.method, request.base_url))
     if request.method == 'POST':
         logger.info("Received request to download %s" % request.form['yturl'])
         clean_url = validate_url(request.form['yturl'])
@@ -104,7 +103,6 @@ def download_file(filename):
 
 @app.route('/results/<job_id>')
 def results(job_id):
-    logger.info("%s %s" % (request.method, request.base_url))
     job = Job.fetch(job_id, connection=conn)
     if job.is_finished:
         return "Finished!", 200
@@ -114,7 +112,6 @@ def results(job_id):
 
 @app.route('/status')
 def status():
-    logger.info("%s %s" % (request.method, request.base_url))
     jobs_data = [{
         'id': j.get_id(), 
         'status': j.get_status(),
@@ -125,6 +122,5 @@ def status():
 
 @app.route('/ping')
 def ping():
-    logger.info("%s %s" % (request.method, request.base_url))
     return str(int(time.time()))
 
