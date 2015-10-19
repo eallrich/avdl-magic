@@ -1,3 +1,2 @@
 https://github.com/heroku/heroku-buildpack-python
-https://github.com/hco2014/heroku-buildpack-ffmpeg
-https://github.com/guilherme-otran/heroku-buildpack-ffprobe
+https://github.com/jayzes/heroku-buildpack-ffmpeg
