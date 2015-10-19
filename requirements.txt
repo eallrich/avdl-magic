@@ -11,3 +11,4 @@ itsdangerous==0.24
 redis==2.10.3
 rq==0.5.6
 youtube-dl==2015.10.18
+ffprobe
