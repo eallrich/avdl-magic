@@ -1,4 +1,5 @@
 import base64
+import datetime
 import logging
 import os
 from subprocess import call
@@ -50,6 +51,15 @@ def download(yturl):
 def get_files_available(where='downloads', extension='.mp3'):
     files = [f for f in os.listdir(where) if f.endswith(extension)]
     files.sort(key=lambda x: os.path.getmtime(os.path.join(where, x)), reverse=True)
+    path = lambda x: os.path.join(where, x)
+    makedatetime = lambda ts: datetime.datetime.fromtimestamp(ts)
+    nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
+    files = [
+        [
+            f,
+            nicedate(makedatetime(os.path.getmtime(path(f)))),
+            os.path.getsize(path(f))
+        ] for f in files]
     return files
 
 
@@ -82,8 +92,9 @@ def main():
             flash("Queued Job ID: <a href=\"%s\">%s</a>" % (url_for('results', job_id=job.get_id()), job.get_id()), 'warning')
 
     files = get_files_available()
-    file_urls = [(f, url_for('download_file', filename=f)) for f in files]
-    return render_template('index.html', available=file_urls)
+    url = lambda x: url_for('download_file', filename=x)
+    files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
+    return render_template('index.html', available=files_with_urls)
 
 
 @app.route('/download/<path:filename>')

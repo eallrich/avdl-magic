@@ -24,12 +24,16 @@
         <p>There are {{ available|length }} downloads available.</p>
         <table class="table table-striped">
             <thead><tr>
-                <th>Available Downloads</th>
+                <th>Name</th>
+                <th>Downloaded At</th>
+                <th>File Size (Bytes)</th>
             </tr></thead>
             <tbody>
-            {% for name,link in available %}
+            {% for name,modified,size,link in available %}
                 <tr>
                     <td><a href="{{ link }}">{{ name }}</a></td>
+                    <td>{{ modified }}</td>
+                    <td>{{ size|filesizeformat }} ({{ size }})</td>
                 </tr>
             {% endfor %}
             </tbody>
