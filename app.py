@@ -140,21 +140,11 @@ def download_file(filename):
 
 @app.route('/results/<job_id>')
 def results(job_id):
-    job = Job.fetch(job_id, connection=conn)
+    job = Job.fetch(job_id, connection=redis)
     if job.is_finished:
-        return "Finished!", 200
+        return "Finished!"
     else:
-        return "Still working...", 202
-
-
-@app.route('/status')
-def status():
-    jobs_data = [{
-        'id': j.get_id(), 
-        'status': j.get_status(),
-        'url': j.args[0]}
-        for j in q.jobs]
-    return render_template('status.html', jobs=jobs_data)
+        return "Still working..."
 
 
 @app.route('/ping')
