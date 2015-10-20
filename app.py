@@ -118,17 +118,18 @@ def main():
     makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
     nicedate = lambda ts: makedatetime(ts).strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
-    if redis.llen('alljobs') > 0:
-        # Show the ten most recent jobs
-        for job_id in redis.lrange('alljobs', 0, 9):
-            job_details = redis.hgetall('job:%s' % job_id)
-            job_details['submitted'] = nicedate(job_details['submitted'])
-            job = rqueue.fetch_job(job_id)
+    # Show the ten most recent jobs
+    for job_id in redis.lrange('alljobs', 0, 9):
+        job_details = redis.hgetall('job:%s' % job_id)
+        job_details['submitted'] = nicedate(job_details['submitted'])
+        job = rqueue.fetch_job(job_id)
+        if job is None:
+            logger.info("Job already deleted. Details: %r" % job_details)
+            job_details['status'] = 'deleted'
+        else:
             job_details['status'] = job.get_status()
-            jobs.append(job_details)
-        jobs.sort(key=lambda x: x['submitted'], reverse=True)
-    else:
-        logger.info("Nothing in the job queue, jobs=[]")
+        jobs.append(job_details)
+    jobs.sort(key=lambda x: x['submitted'], reverse=True)
 
     # Populate data for files available for download
     files = get_files_available()
