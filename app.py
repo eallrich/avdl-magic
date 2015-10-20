@@ -102,6 +102,7 @@ def main():
             job_id  = job.get_id()
             job_url = url_for('results', job_id=job_id)
             flash("Queued Job ID: <a href=\"%s\">%s</a>" % (job_url, job_id), 'info')
+            redis.lpush('alljobs', job_id)
             job_details = {
                 'job_id':      job_id,
                 'results_url': job_url,
@@ -111,13 +112,15 @@ def main():
             redis.hmset('job:%s' % job_id, job_details)
 
     # Populate data for queued jobs
-    makedatetime = lambda ts: datetime.datetime.fromtimestamp(ts)
+    makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
     nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
-    for job in rqueue.jobs:
-        job_details = redis.hgetall('job:%s' % job.get_id())
-        job_details['status'] = job.get_status()
+    # Show the ten most recent jobs
+    for job_id in redis.lrange('alljobs', 0, 10):
+        job_details = redis.hgetall('job:%s' % job_id)
         job_details['submitted'] = nicedate(makedatetime(job_details['submitted']))
+        job = rqueue.fetch_job(job_id)
+        job_details['status'] = job.get_status()
         jobs.append(job_details)
     jobs.sort(key=lambda x: x['submitted'], reverse=True)
 
@@ -125,6 +128,7 @@ def main():
     files = get_files_available()
     url = lambda x: url_for('download_file', filename=x)
     files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
+
     return render_template('index.html', available=files_with_urls, jobs=jobs)
 
 
