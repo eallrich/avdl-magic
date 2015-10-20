@@ -33,6 +33,9 @@ except OSError:
     # Already exists
     pass
 
+# Every time the app starts, start with a fresh list of jobs
+redis.delete('alljobs')
+
 def download(yturl):
     """Our workhorse function. Calls youtube-dl to do our dirty work."""
     options = [
@@ -110,6 +113,7 @@ def main():
                 'submitted':   time.time(),
             }
             redis.hmset('job:%s' % job_id, job_details)
+            redis.expire('job:%s' % job_id, 86400) # 24 hours
 
     # Populate data for queued jobs
     makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
