@@ -14,14 +14,15 @@
     {%- endif %}
     {%- endwith %}
         <div class="jumbotron">
-            <div class="text-center"><p>Hello! :-)</p></div>
+            <div class="text-center"><h1>Hello! :-)</h1></div>
             <form action="" method=post>
-                <p>Youtube URL:<br />
+                <p>Enter Youtube URL:
                     <input type=text name=yturl size=40 />
                     <input type=submit value=Get! class="btn btn-lg btn-default"/>
                     <br />
-                    <input type='radio' name='component' value='audio' disabled checked/>Audio
-                    <input type='radio' name='component' value='video' disabled/>Audio+Video
+                    What would you like?
+                    <input type='radio' name='component' value='audio' disabled checked/>Just Audio
+                    <input type='radio' name='component' value='video' disabled/>Video + Audio
                 </p>
             </form>
         </div>
