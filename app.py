@@ -116,16 +116,19 @@ def main():
 
     # Populate data for queued jobs
     makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
-    nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
+    nicedate = lambda ts: makedatetime(ts).strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
-    # Show the ten most recent jobs
-    for job_id in redis.lrange('alljobs', 0, 9):
-        job_details = redis.hgetall('job:%s' % job_id)
-        job_details['submitted'] = nicedate(makedatetime(job_details['submitted']))
-        job = rqueue.fetch_job(job_id)
-        job_details['status'] = job.get_status()
-        jobs.append(job_details)
-    jobs.sort(key=lambda x: x['submitted'], reverse=True)
+    if redis.llen('alljobs') > 0:
+        # Show the ten most recent jobs
+        for job_id in redis.lrange('alljobs', 0, 9):
+            job_details = redis.hgetall('job:%s' % job_id)
+            job_details['submitted'] = nicedate(job_details['submitted'])
+            job = rqueue.fetch_job(job_id)
+            job_details['status'] = job.get_status()
+            jobs.append(job_details)
+        jobs.sort(key=lambda x: x['submitted'], reverse=True)
+    else:
+        logger.info("Nothing in the job queue, jobs=[]")
 
     # Populate data for files available for download
     files = get_files_available()
