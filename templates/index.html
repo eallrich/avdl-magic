@@ -4,15 +4,6 @@
 
 {% block content %}
     <div class="container">
-    {%- with messages = get_flashed_messages(with_categories=True) %}
-    {%- if messages %}
-        <div class="row">
-            <div class="col-md-12">
-                {{ utils.flashed_messages(messages) }}
-            </div>
-        </div>
-    {%- endif %}
-    {%- endwith %}
         <div class="jumbotron">
             <h2>Youtube Downloader - Hello! :-)</h2>
             <br />
@@ -27,6 +18,16 @@
                 </p>
             </form>
         </div>
+
+    {%- with messages = get_flashed_messages(with_categories=True) %}
+    {%- if messages %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ utils.flashed_messages(messages) }}
+            </div>
+        </div>
+    {%- endif %}
+    {%- endwith %}
 
         <h3>Queued Downloads</h3>
         <table class="table table-striped">
