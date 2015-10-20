@@ -21,7 +21,30 @@
                 </p>
             </form>
         </div>
-        <p>There are {{ available|length }} downloads available.</p>
+
+        <h3>Queued Downloads</h3>
+        <table class="table table-striped">
+            <thead><tr>
+                <th>Submitted</th>
+                <th>Job ID</th>
+                <th>Requested URL</th>
+                <th>Job Status</th>
+            </tr></thead>
+            <tbody>
+            {% for job in jobs %}
+                <tr>
+                    <td>{{ job.submitted }}</td>
+                    <td><a href="{{ job.results_url }}">{{ job.job_id }}</a></td>
+                    <td><a href="{{ job.request_url }}">{{ job.request_url }}</a></td>
+                    <td>{{ job.status }}</td>
+                </tr>
+            {% else %}
+                <tr><td><i>Nothing queued for downloading right now. Add a new task using the search box, above.</i></td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Completed Downloads</h3>
         <table class="table table-striped">
             <thead><tr>
                 <th>Name</th>
@@ -31,10 +54,12 @@
             <tbody>
             {% for name,modified,size,link in available %}
                 <tr>
-                    <td><a href="{{ link }}">{{ name }}</a></td>
+                    <td><a href="{{ link }}">{{ name|truncate(60) }}</a></td>
                     <td>{{ modified }}</td>
                     <td>{{ size|filesizeformat }} ({{ size }})</td>
                 </tr>
+            {% else %}
+                <tr><td><i>Looks like there isn't anything here yet. Try downloading something using the search box, above.</i></td></tr>
             {% endfor %}
             </tbody>
         </table>

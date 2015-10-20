@@ -5,11 +5,14 @@ import os
 from subprocess import call
 import time
 
+# Flask imports
 from flask import Flask, flash, render_template, request, send_from_directory, url_for
 from flask_bootstrap import Bootstrap
+
+# Redis and RQ imports
+import redis
 from rq import Queue
 from rq.job import Job
-from worker import conn
 
 import settings
 
@@ -20,10 +23,10 @@ app = Flask(__name__)
 app.secret_key = base64.b64encode(os.urandom(40))
 Bootstrap(app)
 
-# RQ Queue
-q = Queue(connection=conn)
+redis = redis.from_url(settings.redis_url)
+rqueue = Queue(connection=redis)
 
-# Make sure the directory exists
+# Make sure the destination directory exists
 try:
     os.mkdir('downloads')
 except OSError:
@@ -31,6 +34,7 @@ except OSError:
     pass
 
 def download(yturl):
+    """Our workhorse function. Calls youtube-dl to do our dirty work."""
     options = [
         'youtube-dl',
         '--default-search=ytsearch:',
@@ -49,6 +53,12 @@ def download(yturl):
 
 
 def get_files_available(where='downloads', extension='.mp3'):
+    """Provides metadata for any files available for download.
+
+    Returns a list of three-element lists:
+        [ [ filename, ISO 8601 mtime, size ],
+            ...
+        ]"""
     files = [f for f in os.listdir(where) if f.endswith(extension)]
     files.sort(key=lambda x: os.path.getmtime(os.path.join(where, x)), reverse=True)
     path = lambda x: os.path.join(where, x)
@@ -64,6 +74,7 @@ def get_files_available(where='downloads', extension='.mp3'):
 
 
 def validate_url(url):
+    """Confirm the input URL is reasonably safe to feed to youtube-dl."""
     if url.startswith('http://'):
         # Standardize on https
         url = url.replace('http://', 'https://')
@@ -83,21 +94,43 @@ def main():
         clean_url = validate_url(request.form['yturl'])
         if clean_url is not None:
             logger.info("Queuing task to get %s" % clean_url)
-            job = q.enqueue_call(
+            job = rqueue.enqueue_call(
                 func=download,
                 args=(clean_url,),
                 result_ttl=900 # 15 minutes
             )
-            flash("Queued Job ID: <a href=\"%s\">%s</a>" % (url_for('results', job_id=job.get_id()), job.get_id()), 'warning')
+            job_id  = job.get_id()
+            job_url = url_for('results', job_id=job_id)
+            flash("Queued Job ID: <a href=\"%s\">%s</a>" % (job_url, job_id), 'info')
+            job_details = {
+                'job_id':      job_id,
+                'results_url': job_url,
+                'request_url': clean_url,
+                'submitted':   time.time(),
+            }
+            redis.hmset('job:%s' % job_id, job_details)
 
+    # Populate data for queued jobs
+    makedatetime = lambda ts: datetime.datetime.fromtimestamp(ts)
+    nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
+    jobs = []
+    for job in q.jobs:
+        job_details = redis.hgetall('job:%s' % job.get_id())
+        job_details['status'] = job.get_status()
+        job_details['submitted'] = nicedate(makedatetime(job_details['submitted']))
+        jobs.append(job_details)
+    jobs.sort(key=lambda x: x['submitted'], reverse=True)
+
+    # Populate data for files available for download
     files = get_files_available()
     url = lambda x: url_for('download_file', filename=x)
     files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
-    return render_template('index.html', available=files_with_urls)
+    return render_template('index.html', available=files_with_urls, jobs=jobs)
 
 
 @app.route('/download/<path:filename>')
 def download_file(filename):
+    """Simple and sufficient. Lets a user download a file we've pulled in."""
     return send_from_directory('downloads', filename, as_attachment=True)
 
 
