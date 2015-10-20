@@ -42,7 +42,7 @@
                     <td>{{ job.submitted }}</td>
                     <td><a href="{{ job.results_url }}">{{ job.job_id }}</a></td>
                     <td><a href="{{ job.request_url }}">{{ job.request_url }}</a></td>
-                    <td>{{ job.status }}</td>
+                    <td>{{ job.status|capitalize }}</td>
                 </tr>
             {% else %}
                 <tr>
