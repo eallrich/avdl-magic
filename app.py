@@ -33,9 +33,6 @@ except OSError:
     # Already exists
     pass
 
-# Every time the app starts, start with a fresh list of jobs
-redis.delete('alljobs')
-
 def download(yturl):
     """Our workhorse function. Calls youtube-dl to do our dirty work."""
     options = [
@@ -106,6 +103,8 @@ def main():
             job_url = url_for('results', job_id=job_id)
             flash("Queued Job ID: <a href=\"%s\">%s</a>" % (job_url, job_id), 'info')
             redis.lpush('alljobs', job_id)
+            # Keep only the ten latest
+            redis.ltrim('alljobs', 0, 9)
             job_details = {
                 'job_id':      job_id,
                 'results_url': job_url,
@@ -120,7 +119,7 @@ def main():
     nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
     # Show the ten most recent jobs
-    for job_id in redis.lrange('alljobs', 0, 10):
+    for job_id in redis.lrange('alljobs', 0, 9):
         job_details = redis.hgetall('job:%s' % job_id)
         job_details['submitted'] = nicedate(makedatetime(job_details['submitted']))
         job = rqueue.fetch_job(job_id)
