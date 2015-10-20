@@ -39,7 +39,12 @@
                     <td>{{ job.status }}</td>
                 </tr>
             {% else %}
-                <tr><td><i>Nothing queued for downloading right now. Add a new task using the search box, above.</i></td></tr>
+                <tr>
+                    <td><i>Nothing queued for downloading right now. Add a new task using the search box, above.</i></td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
@@ -59,7 +64,11 @@
                     <td>{{ size|filesizeformat }} ({{ size }})</td>
                 </tr>
             {% else %}
-                <tr><td><i>Looks like there isn't anything here yet. Try downloading something using the search box, above.</i></td></tr>
+                <tr>
+                    <td><i>Looks like there isn't anything here yet. Try downloading something using the search box, above.</i></td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
             {% endfor %}
             </tbody>
         </table>
