@@ -114,7 +114,7 @@ def main():
     makedatetime = lambda ts: datetime.datetime.fromtimestamp(ts)
     nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
-    for job in q.jobs:
+    for job in rqueue.jobs:
         job_details = redis.hgetall('job:%s' % job.get_id())
         job_details['status'] = job.get_status()
         job_details['submitted'] = nicedate(makedatetime(job_details['submitted']))
