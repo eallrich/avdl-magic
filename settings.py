@@ -1,3 +1,5 @@
+import os
+
 # logging
 # -------
 logging = {
@@ -5,3 +7,6 @@ logging = {
     'level':  'INFO',
 }
 
+# redis
+# -----
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
