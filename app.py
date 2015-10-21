@@ -7,7 +7,7 @@ import time
 
 # Flask imports
 from flask import Flask, flash, render_template, request, send_from_directory, url_for
-from flask_bootstrap import Bootstrap
+#from flask_bootstrap import Bootstrap
 
 # Redis and RQ imports
 import redis
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = base64.b64encode(os.urandom(40))
-Bootstrap(app)
+#Bootstrap(app)
 
 redis = redis.from_url(settings.redis_url)
 rqueue = Queue(connection=redis)
@@ -136,7 +136,7 @@ def main():
     url = lambda x: url_for('download_file', filename=x)
     files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
 
-    return render_template('index.html', available=files_with_urls, jobs=jobs)
+    return render_template('newindex.html', available=files_with_urls, jobs=jobs)
 
 
 @app.route('/download/<path:filename>')
