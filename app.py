@@ -7,7 +7,6 @@ import time
 
 # Flask imports
 from flask import Flask, flash, render_template, request, send_from_directory, url_for
-#from flask_bootstrap import Bootstrap
 
 # Redis and RQ imports
 import redis
@@ -21,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = base64.b64encode(os.urandom(40))
-#Bootstrap(app)
 
 redis = redis.from_url(settings.redis_url)
 rqueue = Queue(connection=redis)
