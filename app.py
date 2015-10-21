@@ -105,6 +105,27 @@ def queued_job_info():
     return jobs
 
 
+def sizeof_fmt(num, suffix='B'):
+    """Happily used from http://stackoverflow.com/a/1094933"""
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
+
+
+def downloaded_files_info():
+    files = get_files_available()
+    url = lambda x: url_for('download_file', filename=x)
+    files_with_urls = [{
+        'name': name,
+        'modified': modified,
+        'size': sizeof_fmt(size),
+        'url': url(name),
+    } for name, modified, size in files]
+    return files_with_urls
+
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
@@ -132,21 +153,19 @@ def main():
             redis.hmset('job:%s' % job_id, job_details)
             redis.expire('job:%s' % job_id, 86400) # 24 hours
 
-    # Populate data for queued jobs
-    jobs = queued_job_info()
-
-    # Populate data for files available for download
-    files = get_files_available()
-    url = lambda x: url_for('download_file', filename=x)
-    files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
-
-    return render_template('index.html', available=files_with_urls, jobs=jobs)
+    return render_template('index.html')
 
 
 @app.route('/queued')
 def queued():
     jobs = queued_job_info()
     return json.dumps(jobs)
+
+
+@app.route('/downloaded')
+def downloaded():
+    files = downloaded_files_info()
+    return json.dumps(files)
 
 
 @app.route('/download/<path:filename>')

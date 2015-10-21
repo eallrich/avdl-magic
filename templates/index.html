@@ -17,7 +17,7 @@
       </form>
     </div>
 
-    <h3>Queued Downloads</h3><button class="btn" ng-click="watchQueue()">Watch Queue</button>
+    <h3>Queued Downloads</h3>
     <table class="table table-striped">
       <thead><tr>
         <th>Submitted</th>
@@ -45,19 +45,18 @@
         <th>File Size (Bytes)</th>
       </tr></thead>
       <tbody>
-      {% for name,modified,size,link in available %}
-        <tr>
-          <td><a href="{{ link }}">{{ name|truncate(60) }}</a></td>
-          <td>{{ modified }}</td>
-          <td>{{ size|filesizeformat }} ({{ size }})</td>
+      {% raw %}
+        <tr ng-repeat="file in downloaded">
+          <td><a href="{{ file.url }}">{{ file.name|limitTo:60 }}</a></td>
+          <td>{{ file.modified }}</td>
+          <td>{{ file.size }}</td>
         </tr>
-      {% else %}
-        <tr>
+      {% endraw %}
+        <!--<tr>
           <td><i>Looks like there isn't anything here yet. Try downloading something using the search box, above.</i></td>
           <td></td>
           <td></td>
-        </tr>
-      {% endfor %}
+        </tr>-->
       </tbody>
     </table>
   </div>
