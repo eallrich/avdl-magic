@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app>
   <head>
     <title>{% block title %}Youtube Downloader{% endblock %}</title>
     <meta charset="utf-8">
@@ -8,8 +8,10 @@
     <!-- scripts -->
     <script type="text/javascript" src="static/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="static/angular-1.4.5.min.js"></script>
+    <script type="text/javascript" src="static/ytdl.js"></script>
   </head>
-  <body>
+  <body ng-controller="ytdlController">
 {% block content %}
 {% endblock %}
   </body>
