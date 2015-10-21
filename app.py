@@ -145,11 +145,11 @@ def download_file(filename):
 
 @app.route('/results/<job_id>')
 def results(job_id):
-    job = Job.fetch(job_id, connection=redis)
-    if job is None:
-        return "No info. Probably deleted?"
-    else:
+    try:
+        job = Job.fetch(job_id, connection=redis)
         return job.get_status()
+    except:
+        return "No info. Probably deleted?"
 
 
 @app.route('/ping')
