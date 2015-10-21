@@ -1,5 +1,6 @@
 import base64
 import datetime
+import json
 import logging
 import os
 from subprocess import call
@@ -85,6 +86,25 @@ def validate_url(url):
         return None
 
 
+def queued_job_info():
+    makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
+    nicedate = lambda ts: makedatetime(ts).strftime("%Y-%m-%dT%H:%M:%S")
+    jobs = []
+    # Show the ten most recent jobs
+    for job_id in redis.lrange('alljobs', 0, 9):
+        job_details = redis.hgetall('job:%s' % job_id)
+        job_details['submitted'] = nicedate(job_details['submitted'])
+        job = rqueue.fetch_job(job_id)
+        if job is None:
+            logger.info("Job already deleted. Details: %r" % job_details)
+            job_details['status'] = 'deleted'
+        else:
+            job_details['status'] = job.get_status()
+        jobs.append(job_details)
+    jobs.sort(key=lambda x: x['submitted'], reverse=True)
+    return jobs
+
+
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'POST':
@@ -113,21 +133,7 @@ def main():
             redis.expire('job:%s' % job_id, 86400) # 24 hours
 
     # Populate data for queued jobs
-    makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
-    nicedate = lambda ts: makedatetime(ts).strftime("%Y-%m-%dT%H:%M:%S")
-    jobs = []
-    # Show the ten most recent jobs
-    for job_id in redis.lrange('alljobs', 0, 9):
-        job_details = redis.hgetall('job:%s' % job_id)
-        job_details['submitted'] = nicedate(job_details['submitted'])
-        job = rqueue.fetch_job(job_id)
-        if job is None:
-            logger.info("Job already deleted. Details: %r" % job_details)
-            job_details['status'] = 'deleted'
-        else:
-            job_details['status'] = job.get_status()
-        jobs.append(job_details)
-    jobs.sort(key=lambda x: x['submitted'], reverse=True)
+    jobs = queued_job_info()
 
     # Populate data for files available for download
     files = get_files_available()
@@ -135,6 +141,12 @@ def main():
     files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
 
     return render_template('index.html', available=files_with_urls, jobs=jobs)
+
+
+@app.route('/queued')
+def queued():
+    jobs = queued_job_info()
+    return json.dumps(jobs)
 
 
 @app.route('/download/<path:filename>')
