@@ -136,7 +136,7 @@ def main():
     url = lambda x: url_for('download_file', filename=x)
     files_with_urls = [[name, modified, size, url(name)] for name, modified, size in files]
 
-    return render_template('newindex.html', available=files_with_urls, jobs=jobs)
+    return render_template('index.html', available=files_with_urls, jobs=jobs)
 
 
 @app.route('/download/<path:filename>')
