@@ -156,16 +156,13 @@ def main():
     return render_template('index.html')
 
 
-@app.route('/queued')
-def queued():
-    jobs = queued_job_info()
-    return json.dumps(jobs)
-
-
-@app.route('/downloaded')
-def downloaded():
-    files = downloaded_files_info()
-    return json.dumps(files)
+@app.route('/status')
+def status():
+    status = {
+        'jobs': queued_job_info(),
+        'files': downloaded_files_info(),
+    }
+    return json.dumps(status)
 
 
 @app.route('/download/<path:filename>')

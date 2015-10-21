@@ -3,31 +3,21 @@ var ytdlApp = angular.module('ytdlApp', []);
 ytdlApp.controller('ytdlController', ['$scope', '$log', '$http', '$timeout', function($scope, $log, $http, $timeout) {
   var watcher = function() {
     $log.log('watcher triggered');
-    var watchQueue = function() {
-      $http.get('/queued').
-        success(function(jobs) {
-          $log.log("Found " + jobs.length + " jobs queued");
-          $scope.jobs = jobs;
-          $timeout(watchDownload, 3000); // 3 seconds
+    var watchStatus = function() {
+      $http.get('/status').
+        success(function(data) {
+          $scope.jobs = data.jobs
+          $scope.downloaded = data.files
+          $log.log("Found " + $scope.jobs.length + " jobs queued");
+          $log.log("Found " + $scope.downloaded.length + " downloaded files");
+          $timeout(watchStatus, 3000); // milliseconds
         }).
         error(function(error) {
           $log.log(error);
         });
     };
 
-    var watchDownload = function() {
-      $http.get('/downloaded').
-        success(function(downloaded) {
-          $log.log("Found " + downloaded.length + " downloaded files");
-          $scope.downloaded = downloaded;
-          $timeout(watchQueue, 3000); // 3 seconds
-        }).
-        error(function(error) {
-          $log.log(error);
-        });
-    };
-
-    watchQueue();
+    watchStatus();
   };
 
   watcher();
