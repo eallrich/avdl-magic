@@ -18,5 +18,7 @@ ytdlApp.controller('ytdlController', ['$scope', '$log', '$http', '$timeout', fun
     watcher();
   };
 
+  $scope.watchQueue();
+
 }]);
 
