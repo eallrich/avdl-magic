@@ -7,6 +7,7 @@ ytdlApp.controller('ytdlController', ['$scope', '$log', '$http', '$timeout', fun
       $http.get('/queued').
         success(function(jobs) {
           $log.log("Found " + jobs.length + " jobs queued");
+          $scope.jobs = jobs;
           $timeout(watcher, 3000); // 3 seconds
         }).
         error(function(error) {

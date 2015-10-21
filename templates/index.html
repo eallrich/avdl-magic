@@ -26,21 +26,14 @@
         <th>Job Status</th>
       </tr></thead>
       <tbody>
-      {% for job in jobs %}
-        <tr>
+      {% raw %}
+        <tr ng-repeat="job in jobs">
           <td>{{ job.submitted }}</td>
           <td><a href="{{ job.results_url }}">{{ job.job_id }}</a></td>
           <td><a href="{{ job.request_url }}">{{ job.request_url }}</a></td>
-          <td>{{ job.status|capitalize }}</td>
+          <td style="text-transform: capitalize">{{ job.status }}</td>
         </tr>
-      {% else %}
-        <tr>
-          <td><i>Nothing queued for downloading right now. Add a new task using the search box, above.</i></td>
-          <td></td>
-          <td></td>
-          <td></td>
-        </tr>
-      {% endfor %}
+      {% endraw %}
       </tbody>
     </table>
 
