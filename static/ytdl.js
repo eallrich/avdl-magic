@@ -5,8 +5,10 @@ ytdlApp.controller('ytdlController',
     function($scope, $log, $http, $timeout) {
 
     $scope.enqueue = function() {
-        $log.log('enqueue requested for ' + $scope.yturl);
-        $http.post('/api/enqueue', {'yturl': $scope.yturl}).
+        var yturl = $scope.yturl;
+        $scope.yturl = '';
+        $log.log('enqueue requested for ' + yturl);
+        $http.post('/api/enqueue', {'yturl': yturl}).
             success(function(response) {
                 $log.log(response);
                 watcher();
