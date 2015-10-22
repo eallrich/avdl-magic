@@ -7,7 +7,9 @@ dominate==2.1.16
 gunicorn==19.3.0
 honcho==0.6.6
 itsdangerous==0.24
+lxml==3.4.4
 redis==2.10.3
+requests==2.8.1
 rq==0.5.6
 youtube-dl==2015.10.18
 ffprobe

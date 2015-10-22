@@ -7,7 +7,7 @@ ytdlApp.controller('ytdlController',
     $scope.enqueue = function() {
         var yturl = $scope.yturl;
         $scope.yturl = '';
-        $log.log('enqueue requested for ' + yturl);
+        $log.log('[Enqueue] Requested for ' + yturl);
         $http.post('/api/enqueue', {'yturl': yturl}).
             success(function(response) {
                 $log.log(response);
@@ -28,36 +28,30 @@ ytdlApp.controller('ytdlController',
         return false;
     };
 
+    var watcher_instance = false;
     var watcher = function() {
-        $log.log('watcher triggered');
-        var instance = '';
-        var watchStatus = function() {
-            if(instance != '') {
-                $log.log('watcher already running, aborting');
-                return;
-            } else {
-                instance = 'taken';
-                $log.log('no watchers running, beginning duties');
-            }
-            $http.get('/api/status').
-                success(function(data) {
-                    $scope.jobs = data.jobs
-                    $scope.downloaded = data.files
-                    if(anythingActive($scope.jobs)) {
-                        instance = ''
-                        $timeout(watchStatus, 1000); // milliseconds
-                    } else {
-                        instance = '';
-                        $log.log('no active jobs, ceasing polling');
-                    }
-                }).
-                error(function(error) {
-                    instance = '';
-                    $log.log(error);
-                });
-        };
-
-        watchStatus();
+        if(watcher_instance == true) {
+            $log.log('[Watcher] Instance already running, aborting');
+            return;
+        } else {
+            watcher_instance = true;
+        }
+        $http.get('/api/status').
+            success(function(data) {
+                $scope.jobs = data.jobs
+                $scope.downloaded = data.files
+                if(anythingActive($scope.jobs)) {
+                    watcher_instance = false
+                    $timeout(watcher, 1000); // milliseconds
+                } else {
+                    watcher_instance = false;
+                    $log.log('[Watcher] No active jobs, ceasing');
+                }
+            }).
+            error(function(error) {
+                watcher_instance = false;
+                $log.log(error);
+            });
     };
 
     // Initialize queue & download status

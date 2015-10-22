@@ -6,12 +6,11 @@ import os
 from subprocess import call
 import time
 
-# Flask imports
 from flask import Flask, render_template, request, send_from_directory, url_for
-
-# Redis and RQ imports
+import lxml
 import redis
-from rq import Queue
+import requests
+from rq import get_current_job, Queue
 from rq.job import Job
 
 import settings
@@ -34,6 +33,13 @@ except OSError:
 
 def download(yturl):
     """Our workhorse function. Calls youtube-dl to do our dirty work."""
+    # Start with getting the title
+    r = requests.get(yturl)
+    tree = lxml.html.fromstring(r.content)
+    title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
+    job_id = get_current_job()
+    redis.hset('job:%s' % job_id, 'page_title', title)
+    # Then get the video
     options = [
         'youtube-dl',
         '--default-search=ytsearch:',
@@ -46,7 +52,7 @@ def download(yturl):
         '--no-mtime',
         yturl,
     ]
-    logger.info("Running with options:\n    %s" % ' '.join(options))
+    #logger.info("Running with options:\n    %s" % ' '.join(options))
     call(options, shell=False)
     return "Done"
 
