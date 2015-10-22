@@ -46,7 +46,7 @@
       {% raw %}
         <tr ng-repeat="job in jobs">
           <td>{{ job.submitted }}</td>
-          <td><a href="{{ job.results_url }}">{{ job.job_id }}</a></td>
+          <td>{{ job.job_id }}</td>
           <td><a href="{{ job.request_url }}">{{ job.page_title }}</a></td>
           <td style="text-transform: capitalize">
             <span class="label label-{{ job.label }}">{{ job.status }}</span>

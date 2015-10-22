@@ -57,6 +57,20 @@ def download(yturl):
     return "Done"
 
 
+def nicetimedelta(ts):
+    old_datetime = datetime.datetime.fromtimestamp(float(ts))
+    now = datetime.datetime.now()
+    difference = now - old_datetime
+    if difference.seconds < 3: # don't show '0 seconds ago'
+        return "just now"
+    elif difference.seconds < 60: # don't show '0 minutes ago'
+        return "%d seconds ago" % difference.seconds
+    elif difference.seconds < 120: # use singular 'minute'
+        return "1 minute ago"
+    else:
+        return "%d minutes ago" % int(difference.seconds / 60)
+
+
 def get_files_available(where='downloads', extension='.mp3'):
     """Provides metadata for any files available for download.
 
@@ -67,12 +81,10 @@ def get_files_available(where='downloads', extension='.mp3'):
     files = [f for f in os.listdir(where) if f.endswith(extension)]
     files.sort(key=lambda x: os.path.getmtime(os.path.join(where, x)), reverse=True)
     path = lambda x: os.path.join(where, x)
-    makedatetime = lambda ts: datetime.datetime.fromtimestamp(ts)
-    nicedate = lambda dt: dt.strftime("%Y-%m-%dT%H:%M:%S")
     files = [
         [
             f,
-            nicedate(makedatetime(os.path.getmtime(path(f)))),
+            nicetimedelta(os.path.getmtime(path(f))),
             os.path.getsize(path(f))
         ] for f in files]
     return files
@@ -91,8 +103,6 @@ def validate_url(url):
 
 
 def queued_job_info():
-    makedatetime = lambda ts: datetime.datetime.fromtimestamp(float(ts))
-    nicedate = lambda ts: makedatetime(ts).strftime("%Y-%m-%dT%H:%M:%S")
     jobs = []
     # Show the ten most recent jobs
     for job_id in redis.lrange('alljobs', 0, 9):
@@ -100,7 +110,7 @@ def queued_job_info():
         if job is None:
             continue # don't bother showing the 'deleted' jobs
         job_details = redis.hgetall('job:%s' % job_id)
-        job_details['submitted'] = nicedate(job_details['submitted'])
+        job_details['submitted'] = nicetimedelta(job_details['submitted'])
         job_details['status'] = job.get_status()
         jobs.append(job_details)
     jobs.sort(key=lambda x: x['submitted'], reverse=True)
