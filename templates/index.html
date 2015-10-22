@@ -6,8 +6,10 @@
       <h2>Hello. :-)</h2>
       <p>Made with <span class="glyphicon glyphicon-heart"></span> to help you turn Youtube videos into .mp3 files. Simply enter a Youtube URL, click 'Get!', and then watch the magical robots do their work.</p>
       <form role="form" ng-submit="enqueue()">
-        <p>
+        <div class="row">
+          <div class="col-lg-6">
           <input type="text" class="form-control input-lg" name="yturl" ng-model="yturl" size=40 placeholder="Enter a Youtube URL" />
+          </div>
           <button class="btn btn-lg btn-primary">
             <span class="glyphicon glyphicon-cloud-download"></span> Get!
           </button>
@@ -15,7 +17,6 @@
           What would you like from it?
           <input type='radio' name='component' value='audio' checked=''/>Just the Audio
           <input type='radio' name='component' value='video' disabled=''/>Audio and Video
-        </p>
       </form>
     </div>
 
@@ -48,7 +49,8 @@
         </tr>
       {% endraw %}
         <tr ng-show="!jobs.length">
-          <td><i>Looks like there aren't any jobs queued up yet. Try creating a new task using the search box, above.</i></td>
+          <td><i>Looks like there aren't any jobs queued up yet.</i></td>
+          <td></td>
           <td></td>
           <td></td>
         </tr>
