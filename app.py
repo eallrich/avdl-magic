@@ -96,13 +96,12 @@ def queued_job_info():
     jobs = []
     # Show the ten most recent jobs
     for job_id in redis.lrange('alljobs', 0, 9):
-        job_details = redis.hgetall('job:%s' % job_id)
-        job_details['submitted'] = nicedate(job_details['submitted'])
         job = rqueue.fetch_job(job_id)
         if job is None:
-            job_details['status'] = 'deleted'
-        else:
-            job_details['status'] = job.get_status()
+            continue # don't bother showing the 'deleted' jobs
+        job_details = redis.hgetall('job:%s' % job_id)
+        job_details['submitted'] = nicedate(job_details['submitted'])
+        job_details['status'] = job.get_status()
         jobs.append(job_details)
     jobs.sort(key=lambda x: x['submitted'], reverse=True)
     return jobs

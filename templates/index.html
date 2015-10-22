@@ -8,8 +8,8 @@
       <form role="form" ng-submit="enqueue()">
         <p>Enter a Youtube URL:
           <input type="text" name="yturl" ng-model="yturl" size=40 />
-          <button class="btn btn-lg btn-success">
-            <span class="glyphicon glyphicon-download"></span> Get!
+          <button class="btn btn-lg btn-primary">
+            <span class="glyphicon glyphicon-cloud-download"></span> Get!
           </button>
           <br />
           What would you like from it?
@@ -27,7 +27,8 @@
     {% endraw %}
     </div>
 
-    <h3>Queued Downloads</h3>
+    <div class="panel panel-primary">
+    <div class="panel-heading">Queued Downloads</div>
     <table class="table table-striped">
       <thead><tr>
         <th>Submitted</th>
@@ -48,8 +49,10 @@
       {% endraw %}
       </tbody>
     </table>
+    </div>
 
-    <h3>Completed Downloads</h3>
+    <div class="panel panel-success">
+    <div class="panel-heading">Completed Downloads</div>
     <table class="table table-striped">
       <thead><tr>
         <th>Name</th>
@@ -71,5 +74,7 @@
         </tr>-->
       </tbody>
     </table>
+    </div>
+
   </div>
 {%- endblock %}
