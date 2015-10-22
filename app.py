@@ -37,7 +37,7 @@ def download(yturl):
     r = requests.get(yturl)
     tree = lxml.html.fromstring(r.content)
     title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
-    job_id = get_current_job()
+    job_id = get_current_job().get_id()
     redis.hset('job:%s' % job_id, 'page_title', title)
     # Then get the video
     options = [
