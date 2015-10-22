@@ -166,6 +166,7 @@ def enqueue():
         'job_id':      job_id,
         'request_url': clean_url,
         'submitted':   time.time(),
+        'page_title':  '...', # just a placeholder to keep it pretty
     }
     redis.hmset('job:%s' % job_id, job_details)
     redis.expire('job:%s' % job_id, 86400) # 24 hours

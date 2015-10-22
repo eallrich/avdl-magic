@@ -28,6 +28,19 @@ ytdlApp.controller('ytdlController',
         return false;
     };
 
+    var mapLabels = {
+        "queued": "default",
+        "started": "primary",
+        "finished": "success",
+        "failed": "danger",
+        "deleted": "warning" // Defined by YTDL, not an RQ job state
+    };
+    var finishingTouches = function(jobs) {
+        for(var i = 0; i < jobs.length; i++) {
+            jobs[i].label = mapLabels[jobs[i].status];
+        }
+    };
+
     var watcher_instance = false;
     var watcher = function() {
         if(watcher_instance == true) {
@@ -40,6 +53,7 @@ ytdlApp.controller('ytdlController',
             success(function(data) {
                 $scope.jobs = data.jobs
                 $scope.downloaded = data.files
+                finishingTouches($scope.jobs);
                 if(anythingActive($scope.jobs)) {
                     watcher_instance = false
                     $timeout(watcher, 1000); // milliseconds

@@ -8,7 +8,9 @@
       <form role="form" ng-submit="enqueue()">
         <p>Enter a Youtube URL:
           <input type="text" name="yturl" ng-model="yturl" size=40 />
-          <button class="btn btn-lg btn-default">Get!</button>
+          <button class="btn btn-lg btn-success">
+            <span class="glyphicon glyphicon-download"></span> Get!
+          </button>
           <br />
           What would you like from it?
           <input type='radio' name='component' value='audio' checked=''/>Just the Audio
@@ -22,7 +24,7 @@
       <thead><tr>
         <th>Submitted</th>
         <th>Job ID</th>
-        <th>Requested URL</th>
+        <th>Requested Video</th>
         <th>Job Status</th>
       </tr></thead>
       <tbody>
@@ -31,7 +33,9 @@
           <td>{{ job.submitted }}</td>
           <td><a href="{{ job.results_url }}">{{ job.job_id }}</a></td>
           <td><a href="{{ job.request_url }}">{{ job.page_title }}</a></td>
-          <td style="text-transform: capitalize">{{ job.status }}</td>
+          <td style="text-transform: capitalize">
+            <span class="label label-{{ job.label }}">{{ job.status }}</span>
+          </td>
         </tr>
       {% endraw %}
       </tbody>
