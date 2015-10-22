@@ -13,13 +13,16 @@
           <button class="btn btn-lg btn-primary">
             <span class="glyphicon glyphicon-cloud-download"></span> Get!
           </button>
-          <br />
+        </div>
+        <div class="row">
           What would you like from it?
           <input type='radio' name='component' value='audio' checked=''/>Just the Audio
           <input type='radio' name='component' value='video' disabled=''/>Audio and Video
+        </div>
       </form>
     </div>
 
+    <div class="row">
     <div class="col-md-12">
     {% raw %}
         <div ng-repeat="alert in alerts" class="alert alert-{{ alert.style }}" role="alert">
@@ -27,7 +30,9 @@
         </div>
     {% endraw %}
     </div>
+    </div>
 
+    <div class="row">
     <div class="panel panel-info">
     <div class="panel-heading">Queued Downloads</div>
     <table class="table table-striped">
@@ -57,7 +62,9 @@
       </tbody>
     </table>
     </div>
+    </div>
 
+    <div class="row">
     <div class="panel panel-success">
     <div class="panel-heading">Completed Downloads</div>
     <table class="table table-striped">
@@ -81,6 +88,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
     </div>
 
   </div>
