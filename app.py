@@ -113,7 +113,7 @@ def queued_job_info():
         job_details['submitted'] = nicetimedelta(job_details['submitted'])
         job_details['status'] = job.get_status()
         jobs.append(job_details)
-    jobs.sort(key=lambda x: x['submitted'], reverse=True)
+    #jobs.sort(key=lambda x: x['submitted'], reverse=True)
     return jobs
 
 
