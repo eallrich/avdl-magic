@@ -94,7 +94,6 @@ def queued_job_info():
         job_details['submitted'] = nicedate(job_details['submitted'])
         job = rqueue.fetch_job(job_id)
         if job is None:
-            logger.info("Job already deleted. Details: %r" % job_details)
             job_details['status'] = 'deleted'
         else:
             job_details['status'] = job.get_status()
