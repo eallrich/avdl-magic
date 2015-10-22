@@ -20,9 +20,11 @@
     </div>
 
     <div class="col-md-12">
+    {% raw %}
         <div ng-repeat="alert in alerts" class="alert alert-{{ alert.style }}" role="alert">
             {{ alert.text }}
         </div>
+    {% endraw %}
     </div>
 
     <h3>Queued Downloads</h3>
