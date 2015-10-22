@@ -9,33 +9,45 @@ ytdlApp.controller('ytdlController',
         $http.post('/api/enqueue', {'yturl': $scope.yturl}).
             success(function(response) {
                 $log.log(response);
-                watcher(900); // milliseconds
+                watcher();
             }).
             error(function(error) {
                 $log.log(error);
             });
     };
 
-    var watcher = function(delay) {
-        $log.log('watcher triggered with delay of ' + delay + "ms");
+    var anythingActive = function(jobs) {
+        for(var i = 0; i < jobs.length; i++) {
+            // RQ job states: ['queued', 'started', 'finished', 'failed']
+            if(jobs[i].status === "started" || jobs[i].status === "queued") {
+                return true;
+            }
+        }
+        return false;
+
+    var watcher = function() {
+        $log.log('watcher triggered');
+        var instance = '';
         var watchStatus = function() {
+            if(instance != '') {
+                $log.log('watcher already running, aborting');
+            } else {
+                instance = 'taken';
+                $log.log('no watchers running, beginning duties');
+            }
             $http.get('/api/status').
                 success(function(data) {
                     $scope.jobs = data.jobs
                     $scope.downloaded = data.files
-                    var active_jobs = false;
-                    for(var i = 0; i < $scope.jobs.length; i++) {
-                        var job = $scope.jobs[i];
-                        if(job.status === "started" || job.status === "queued") {
-                            active_jobs = true;
-                            break;
-                        }
-                    }
-                    if(active_jobs && delay > 0) {
-                        $timeout(watchStatus, delay);
+                    if(anythingActive($scope.jobs)) {
+                        $timeout(watchStatus, 1000); // milliseconds
+                    } else {
+                        instance = '';
+                        $log.log('no active jobs, ceasing polling');
                     }
                 }).
                 error(function(error) {
+                    instance = '';
                     $log.log(error);
                 });
         };
@@ -44,7 +56,7 @@ ytdlApp.controller('ytdlController',
     };
 
     // Initialize queue & download status
-    watcher(0); // don't poll
+    watcher();
 
 }]);
 
