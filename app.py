@@ -202,3 +202,10 @@ def job_details(job_id):
         }
         return json.dumps(response), 404 # not found
 
+
+@app.route('/admin/flushredis')
+def flushredis():
+    logger.info("Received request to flush redis")
+    redis.flushall()
+    return "Success"
+
