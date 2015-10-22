@@ -4,10 +4,10 @@
   <div class="container">
     <div class="jumbotron">
       <h2>Hello. :-)</h2>
-      <p>Made with <span class="glyphicon glyphicon-heart"></span> to help you turn Youtube videos into .mp3 files. Simply enter a Youtube URL, click 'Get!', then watch the magical robots do their work.</p>
+      <p>Made with <span class="glyphicon glyphicon-heart"></span> to help you turn Youtube videos into .mp3 files. Simply enter a Youtube URL, click 'Get!', and then watch the magical robots do their work.</p>
       <form role="form" ng-submit="enqueue()">
-        <p>Enter a Youtube URL:
-          <input type="text" name="yturl" ng-model="yturl" size=40 />
+        <p>
+          <input type="text" class="form-control input-lg" name="yturl" ng-model="yturl" size=40 placeholder="Enter a Youtube URL" />
           <button class="btn btn-lg btn-primary">
             <span class="glyphicon glyphicon-cloud-download"></span> Get!
           </button>
@@ -27,7 +27,7 @@
     {% endraw %}
     </div>
 
-    <div class="panel panel-primary">
+    <div class="panel panel-info">
     <div class="panel-heading">Queued Downloads</div>
     <table class="table table-striped">
       <thead><tr>
@@ -47,6 +47,11 @@
           </td>
         </tr>
       {% endraw %}
+        <tr ng-show="!jobs.length">
+          <td><i>Looks like there aren't any jobs queued up yet. Try creating a new task using the search box, above.</i></td>
+          <td></td>
+          <td></td>
+        </tr>
       </tbody>
     </table>
     </div>
@@ -67,11 +72,11 @@
           <td>{{ file.size }}</td>
         </tr>
       {% endraw %}
-        <!--<tr>
+        <tr ng-show="!downloaded.length">
           <td><i>Looks like there isn't anything here yet. Try downloading something using the search box, above.</i></td>
           <td></td>
           <td></td>
-        </tr>-->
+        </tr>
       </tbody>
     </table>
     </div>
