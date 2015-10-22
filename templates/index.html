@@ -7,8 +7,8 @@
       <br />
       <form role="form" ng-submit="enqueue()">
         <p>Enter a Youtube URL:
-          <input type="text" name="yturl" ng-model="yturl" class="form-control" placeholder="https://www.youtube.com/..." style="max-width: 400px;"/>
-          <input type="submit" value="Get!" ng-click="enqueue()" class="btn btn-lg btn-default"/>
+          <input type="text" name="yturl" ng-model="yturl" placeholder="https://www.youtube.com/..." style="max-width: 400px;"/>
+          <button class="btn btn-lg btn-default" ng-click="watcher()">Get!</button>
           <br />
           What would you like?
           <input type='radio' name='component' value='audio' checked=''/>Just Audio
