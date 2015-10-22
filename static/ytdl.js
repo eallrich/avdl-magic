@@ -32,6 +32,7 @@ ytdlApp.controller('ytdlController',
         var watchStatus = function() {
             if(instance != '') {
                 $log.log('watcher already running, aborting');
+                return;
             } else {
                 instance = 'taken';
                 $log.log('no watchers running, beginning duties');
