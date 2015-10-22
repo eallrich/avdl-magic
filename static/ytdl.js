@@ -24,6 +24,7 @@ ytdlApp.controller('ytdlController',
             }
         }
         return false;
+    };
 
     var watcher = function() {
         $log.log('watcher triggered');
