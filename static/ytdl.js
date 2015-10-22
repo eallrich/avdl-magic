@@ -42,6 +42,7 @@ ytdlApp.controller('ytdlController',
                     $scope.jobs = data.jobs
                     $scope.downloaded = data.files
                     if(anythingActive($scope.jobs)) {
+                        instance = ''
                         $timeout(watchStatus, 1000); // milliseconds
                     } else {
                         instance = '';
