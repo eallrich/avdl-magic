@@ -7,7 +7,7 @@ from subprocess import call
 import time
 
 from flask import Flask, render_template, request, send_from_directory, url_for
-import lxml
+import lxml.html
 import redis
 import requests
 from rq import get_current_job, Queue
