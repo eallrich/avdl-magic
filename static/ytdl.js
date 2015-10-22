@@ -4,19 +4,32 @@ ytdlApp.controller('ytdlController',
     ['$scope', '$log', '$http', '$timeout',
     function($scope, $log, $http, $timeout) {
 
-    $scope.alerts = [{style:'danger', text:'Bad things!'},{style:'info', text:'Just info'}];
+    $scope.alerts = [];
+
+    var clearAlertsFrom = function(creator) {
+        $scope.alerts = $scope.alerts.filter(function(element, index, array) {
+            return element.creator != creator;
+        });
+    };
 
     $scope.enqueue = function() {
+        clearAlertsFrom('enqueue');
         var yturl = $scope.yturl;
         $scope.yturl = '';
-        $log.log('[Enqueue] Requested for ' + yturl);
-        $http.post('/api/enqueue', {'yturl': yturl}).
-            success(function(response) {
-                $log.log(response);
+        $log.log('[Enqueue] Requesting ' + yturl);
+        $http.post('/api/enqueue', {'yturl': yturl}).then(
+            function success(r) {
+                $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". New job ID: " + r.data);
                 watcher();
-            }).
-            error(function(error) {
-                $log.log(error);
+            }, function error(r) {
+                $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". Error: " + r.data.error);
+                alertObject = {style:'danger', text:r.data.error, creator:'enqueue'};
+                $scope.alerts.push(alertObject);
+
+                if('info' in r.data) {
+                    alertObject = {style:'info', text:r.data.info, creator:'enqueue'};
+                    $scope.alerts.push(alertObject);
+                }
             });
     };
 
