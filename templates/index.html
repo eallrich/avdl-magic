@@ -5,10 +5,10 @@
     <div class="jumbotron">
       <h2>Hello. :-)</h2>
       <br />
-      <form action="" method=post>
+      <form role="form" ng-submit="enqueue()">
         <p>Enter a Youtube URL:
-          <input type=text name=yturl size=40 />
-          <input type=submit value=Get! class="btn btn-lg btn-default"/>
+          <input type="text" name="yturl" size=40 ng-model="yturl" class="form-control" placeholder="https://www.youtube.com/..." />
+          <input type="submit" value="Get!" class="btn btn-lg btn-default"/>
           <br />
           What would you like?
           <input type='radio' name='component' value='audio' checked=''/>Just Audio
@@ -47,7 +47,7 @@
       <tbody>
       {% raw %}
         <tr ng-repeat="file in downloaded">
-          <td><a href="{{ file.url }}">{{ file.name|limitTo:60 }}</a></td>
+          <td><a href="{{ file.url }}">{{ file.name }}</a></td>
           <td>{{ file.modified }}</td>
           <td>{{ file.size }}</td>
         </tr>

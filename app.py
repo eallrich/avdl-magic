@@ -7,7 +7,7 @@ from subprocess import call
 import time
 
 # Flask imports
-from flask import Flask, flash, render_template, request, send_from_directory, url_for
+from flask import Flask, render_template, request, send_from_directory, url_for
 
 # Redis and RQ imports
 import redis
@@ -81,8 +81,6 @@ def validate_url(url):
         # We're good
         return url
     else:
-        flash("I'm sorry, that doesn't really look like a youtube URL... :-(", 'error')
-        flash("I can download anything that starts with https://www.youtube.com/...", 'info')
         return None
 
 
@@ -126,43 +124,59 @@ def downloaded_files_info():
     return files_with_urls
 
 
-@app.route('/', methods=['GET', 'POST'])
-def main():
-    if request.method == 'POST':
-        logger.info("Received request to download %s" % request.form['yturl'])
-        clean_url = validate_url(request.form['yturl'])
-        if clean_url is not None:
-            logger.info("Queuing task to get %s" % clean_url)
-            job = rqueue.enqueue_call(
-                func=download,
-                args=(clean_url,),
-                result_ttl=900 # 15 minutes
-            )
-            job_id  = job.get_id()
-            job_url = url_for('results', job_id=job_id)
-            flash("Queued Job ID: <a href=\"%s\">%s</a>" % (job_url, job_id), 'info')
-            redis.lpush('alljobs', job_id)
-            # Keep only the ten latest
-            redis.ltrim('alljobs', 0, 9)
-            job_details = {
-                'job_id':      job_id,
-                'results_url': job_url,
-                'request_url': clean_url,
-                'submitted':   time.time(),
-            }
-            redis.hmset('job:%s' % job_id, job_details)
-            redis.expire('job:%s' % job_id, 86400) # 24 hours
-
+@app.route('/')
+def index():
     return render_template('index.html')
 
 
-@app.route('/status')
+@app.route('/api/enqueue', methods=['POST',])
+def enqueue():
+    data = json.loads(request.data.decode())
+    if 'yturl' not in data:
+        response = {
+            'error': "The Youtube URL to download must be provided as 'yturl'",
+        }
+        logger.warn("Rejecting /api/enqueue request missing 'yturl'")
+        return json.dumps(response), 400 # bad request
+
+    clean_url = validate_url(data['yturl'])
+    if clean_url is None:
+        response = {
+            'error': "I'm sorry, that doesn't really look like a Youtube URL. :-(",
+            'info': "I can download anything that starts with https://www.youtube.com/...",
+        }
+        logger.warn("Rejecting /api/enqueue request for %s" % data['yturl'])
+        return json.dumps(response), 403 # forbidden
+
+    logger.info("Accepting /api/enqueue request for %s" % clean_url)
+    job = rqueue.enqueue_call(
+        func=download,
+        args=(clean_url,),
+        result_ttl=900 # 15 minutes
+    )
+    job_id  = job.get_id()
+    redis.lpush('alljobs', job_id)
+    redis.ltrim('alljobs', 0, 9)
+    job_details = {
+        'job_id':      job_id,
+        'request_url': clean_url,
+        'submitted':   time.time(),
+    }
+    redis.hmset('job:%s' % job_id, job_details)
+    redis.expire('job:%s' % job_id, 86400) # 24 hours
+    response = {
+        'job_id': job_id,
+    }
+    return json.dumps(response), 201 # created
+
+
+@app.route('/api/status')
 def status():
-    status = {
+    response = {
         'jobs': queued_job_info(),
         'files': downloaded_files_info(),
     }
-    return json.dumps(status)
+    return json.dumps(response)
 
 
 @app.route('/download/<path:filename>')
@@ -171,16 +185,14 @@ def download_file(filename):
     return send_from_directory('downloads', filename, as_attachment=True)
 
 
-@app.route('/results/<job_id>')
-def results(job_id):
+@app.route('/api/jobs/<job_id>')
+def job_details(job_id):
     try:
         job = Job.fetch(job_id, connection=redis)
-        return job.get_status()
+        return json.dumps({'status': job.get_status()})
     except:
-        return "No info. Probably deleted?"
-
-
-@app.route('/ping')
-def ping():
-    return str(int(time.time()))
+        response = {
+            'error': "No info. Probably deleted?",
+        }
+        return json.dumps(response), 404 # not found
 
