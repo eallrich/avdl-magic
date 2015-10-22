@@ -30,6 +30,8 @@ ytdlApp.controller('ytdlController',
     $scope.enqueue = function() {
         clearAlertsFrom('enqueue');
         $log.log('[Enqueue] Requesting "' + $scope.yturl + '"');
+        // Ensure focus returns to the URL input field for better UX
+        $("#yturl").focus();
         if($scope.yturl === '') {
             $log.log('[Enqueue] Rejecting empty URL');
             return;
