@@ -1,3 +1,16 @@
+/* =============== */
+/* jquery elements */
+/* =============== */
+
+$(function() {
+    $("#yturl").focus();
+});
+
+
+/* =================== */
+/* angular-js Elements */
+/* =================== */
+
 var ytdlApp = angular.module('ytdlApp', []);
 
 ytdlApp.controller('ytdlController',

@@ -5,10 +5,19 @@
     <div class="jumbotron" style="background-color: rgb(199, 168, 247);">
       <h2>Hello. :-)</h2>
       <p>Made with <span class="glyphicon glyphicon-heart" style="color: rgb(77, 14, 179);"></span> to help you turn Youtube videos into .mp3 files.<br />Simply enter a Youtube URL, click 'Get!', and then watch the magical robots do their work. <span class="glyphicon glyphicon-send" style="color: rgb(77, 14, 179);"></span></p>
+      <div class="row" ng-show="alerts.length">
+        <div class="col-md-6">
+          {% raw %}
+            <div ng-repeat="alert in alerts" class="alert alert-{{ alert.style }}" role="alert">
+              {{ alert.text }}
+            </div>
+          {% endraw %}
+        </div>
+      </div>
       <form role="form" ng-submit="enqueue()">
         <div class="row">
           <div class="col-lg-6">
-          <input type="text" class="form-control input-lg" name="yturl" ng-model="yturl" size=40 placeholder="Enter a Youtube URL" />
+          <input id="yturl" type="text" class="form-control input-lg" name="yturl" ng-model="yturl" size=40 placeholder="Enter a Youtube URL" />
           </div>
           <button class="btn btn-lg btn-primary">
             <span class="glyphicon glyphicon-cloud-download"></span> Get!
@@ -22,15 +31,6 @@
       </form>
     </div>
 
-    <div class="row">
-    <div class="col-md-12">
-    {% raw %}
-        <div ng-repeat="alert in alerts" class="alert alert-{{ alert.style }}" role="alert">
-            {{ alert.text }}
-        </div>
-    {% endraw %}
-    </div>
-    </div>
 
     <div class="row">
     <div class="panel panel-info">
