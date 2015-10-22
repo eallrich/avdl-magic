@@ -5,6 +5,8 @@ ytdlApp.controller('ytdlController',
     function($scope, $log, $http, $timeout) {
 
     $scope.alerts = [];
+    $scope.jobs = [];
+    $scope.downloaded = [];
 
     var clearAlertsFrom = function(creator) {
         $scope.alerts = $scope.alerts.filter(function(element, index, array) {
@@ -33,10 +35,10 @@ ytdlApp.controller('ytdlController',
             });
     };
 
-    var anythingActive = function(jobs) {
-        for(var i = 0; i < jobs.length; i++) {
+    $scope.anythingActive = function() {
+        for(var i = 0; i < $scope.jobs.length; i++) {
             // RQ job states: ['queued', 'started', 'finished', 'failed']
-            if(jobs[i].status === "started" || jobs[i].status === "queued") {
+            if($scope.jobs[i].status === "started" || $scope.jobs[i].status === "queued") {
                 return true;
             }
         }
@@ -69,7 +71,7 @@ ytdlApp.controller('ytdlController',
                 $scope.jobs = data.jobs
                 $scope.downloaded = data.files
                 finishingTouches($scope.jobs);
-                if(anythingActive($scope.jobs)) {
+                if($scope.anythingActive()) {
                     watcher_instance = false
                     $timeout(watcher, 1000); // milliseconds
                 } else {
