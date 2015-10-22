@@ -4,6 +4,8 @@ ytdlApp.controller('ytdlController',
     ['$scope', '$log', '$http', '$timeout',
     function($scope, $log, $http, $timeout) {
 
+    $scope.alerts = [{style:'danger', text:'Bad things!'},{style:'info', text:'Just info'}];
+
     $scope.enqueue = function() {
         var yturl = $scope.yturl;
         $scope.yturl = '';
@@ -29,11 +31,11 @@ ytdlApp.controller('ytdlController',
     };
 
     var mapLabels = {
-        "queued": "default",
+        "queued": "info",
         "started": "primary",
         "finished": "success",
         "failed": "danger",
-        "deleted": "warning" // Defined by YTDL, not an RQ job state
+        "deleted": "default" // Defined by YTDL, not an RQ job state
     };
     var finishingTouches = function(jobs) {
         for(var i = 0; i < jobs.length; i++) {

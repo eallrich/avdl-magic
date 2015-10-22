@@ -19,6 +19,12 @@
       </form>
     </div>
 
+    <div class="col-md-12">
+        <div ng-repeat="alert in alerts" class="alert alert-{{ alert.style }}" role="alert">
+            {{ alert.text }}
+        </div>
+    </div>
+
     <h3>Queued Downloads</h3>
     <table class="table table-striped">
       <thead><tr>
