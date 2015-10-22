@@ -26,7 +26,7 @@ ytdlApp.controller('ytdlController',
                     var active_jobs = false;
                     for(var i = 0; i < $scope.jobs.length; i++) {
                         var job = $scope.jobs[i];
-                        if(job.status === "status" || job.status === "queued") {
+                        if(job.status === "started" || job.status === "queued") {
                             active_jobs = true;
                             break;
                         }
