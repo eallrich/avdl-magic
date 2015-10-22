@@ -16,16 +16,21 @@ ytdlApp.controller('ytdlController',
 
     $scope.enqueue = function() {
         clearAlertsFrom('enqueue');
+        $log.log('[Enqueue] Requesting "' + $scope.yturl + '"');
+        if($scope.yturl === '') {
+            $log.log('[Enqueue] Rejecting empty URL');
+            return;
+        }
+
         var yturl = $scope.yturl;
         $scope.yturl = '';
-        $log.log('[Enqueue] Requesting ' + yturl);
         $http.post('/api/enqueue', {'yturl': yturl}).then(
             function success(r) {
                 $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". New job ID: " + r.data);
                 watcher();
             }, function error(r) {
                 $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". Error: " + r.data.error);
-                alertObject = {style:'danger', text:r.data.error, creator:'enqueue'};
+                alertObject = {style:'warning', text:r.data.error, creator:'enqueue'};
                 $scope.alerts.push(alertObject);
 
                 if('info' in r.data) {

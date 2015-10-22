@@ -147,7 +147,7 @@ def enqueue():
     if clean_url is None:
         response = {
             'error': "I'm sorry, that doesn't really look like a Youtube URL. :-(",
-            'info': "I can download anything that starts with https://www.youtube.com/...",
+            'info': "Please try again using a link starting with 'https://www.youtube.com'.",
         }
         logger.warn("Rejecting /api/enqueue request for %s" % data['yturl'])
         return json.dumps(response), 403 # forbidden
