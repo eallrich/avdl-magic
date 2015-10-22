@@ -9,6 +9,7 @@ ytdlApp.controller('ytdlController',
         $http.post('/api/enqueue', {'yturl': $scope.yturl}).
             success(function(response) {
                 $log.log(response);
+                watcher();
             }).
             error(function(error) {
                 $log.log(error);
@@ -24,7 +25,7 @@ ytdlApp.controller('ytdlController',
                     $scope.downloaded = data.files
                     $log.log("Found " + $scope.jobs.length + " jobs queued");
                     $log.log("Found " + $scope.downloaded.length + " downloaded files");
-                    $timeout(watchStatus, 3000); // milliseconds
+                    //$timeout(watchStatus, 3000); // milliseconds
                 }).
                 error(function(error) {
                     $log.log(error);
