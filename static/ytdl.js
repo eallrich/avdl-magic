@@ -42,7 +42,7 @@ ytdlApp.controller('ytdlController',
 
     /* Logging an HTTP response */
     var log_response = function(who, response, text) {
-        message = '=> ' + response.status + ' ' + r.statusText + '. ' + text;
+        message = '=> ' + response.status + ' ' + response.statusText + '. ' + text;
         log(who, message);
     }
 
