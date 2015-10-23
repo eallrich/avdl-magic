@@ -80,6 +80,7 @@ ytdlApp.controller('ytdlController',
 
     var watcher_instance = false;
     var watcher = function() {
+        clearAlertsFrom('watcher');
         if(watcher_instance == true) {
             $log.log('[Watcher] Instance already running, aborting');
             return;
@@ -99,9 +100,13 @@ ytdlApp.controller('ytdlController',
                     $log.log('[Watcher] No active jobs, ceasing');
                 }
             }).
-            error(function(error) {
+            error(function(r) {
                 watcher_instance = false;
-                $log.log(error);
+                $log.log("[Watcher] => " + r.status + " " + r.statusText + ". Data:\n\t" + r.data);
+                alertObject = {style:'error', text:"There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(", creator:'watcher'};
+                $scope.alerts.push(alertObject);
+                alertObject = {style:'warning', text:"The 'Queued Requests' and 'Completed Downloads' aren't going to be accurate.", creator:'watcher'};
+                $scope.alerts.push(alertObject);
             });
     };
 
