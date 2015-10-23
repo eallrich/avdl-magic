@@ -10,9 +10,9 @@ $(function() {
 /* angular-js Elements */
 /* =================== */
 
-var ytdlApp = angular.module('ytdlApp', []);
+var avdlApp = angular.module('avdlApp', []);
 
-ytdlApp.controller('ytdlController',
+avdlApp.controller('avdlController',
     ['$scope', '$log', '$http', '$timeout',
     function($scope, $log, $http, $timeout) {
 
