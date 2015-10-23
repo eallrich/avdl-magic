@@ -3,6 +3,7 @@ import logging
 import os
 from subprocess import call
 
+from flask import url_for
 import lxml.html
 import redis
 import requests
@@ -15,16 +16,25 @@ logging.basicConfig(**settings.logging)
 logger = logging.getLogger(__name__)
 
 redis = redis.from_url(settings.redis_url)
+# Convenience
+jobkey = settings.jobkey
+joblist = settings.joblist
+
+
+def set_title(job_id, yturl):
+    """Sets the job's page_title field using the yturl's <title>."""
+    r = requests.get(yturl)
+    tree = lxml.html.fromstring(r.content)
+    title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
+    redis.hset(jobkey(job_id), 'page_title', title)
 
 
 def download(yturl):
     """Our workhorse function. Calls youtube-dl to do our dirty work."""
-    # Start with getting the title
-    r = requests.get(yturl)
-    tree = lxml.html.fromstring(r.content)
-    title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
     job_id = get_current_job().get_id()
-    redis.hset('job:%s' % job_id, 'page_title', title)
+    destination = os.path.join(settings.download_dir, "%(title)s.%(ext)s")
+    # Start with getting the page title
+    set_title(job_id, yturl)
     # Then get the video
     options = [
         'youtube-dl',
@@ -34,11 +44,10 @@ def download(yturl):
         '--extract-audio',
         '--audio-format=mp3',
         '--audio-quality=1',
-        '--output=downloads/%(title)s-%(id)s.%(ext)s',
+        '--output=%s' % destination,
         '--no-mtime',
         yturl,
     ]
-    #logger.info("Running with options:\n    %s" % ' '.join(options))
     call(options, shell=False)
     return "Done"
 
@@ -57,7 +66,7 @@ def nicetimedelta(ts):
         return "%d minutes ago" % int(difference.seconds / 60)
 
 
-def get_files_available(where='downloads', extension='.mp3'):
+def get_files_available(where=settings.destination_dir, extension='.mp3'):
     """Provides metadata for any files available for download.
 
     Returns a list of three-element lists:
@@ -91,11 +100,11 @@ def validate_url(url):
 def queued_job_info():
     jobs = []
     # Show the ten most recent jobs
-    for job_id in redis.lrange('alljobs', 0, 9):
+    for job_id in redis.lrange(joblist, 0, 9):
         job = rqueue.fetch_job(job_id)
         if job is None:
             continue # don't bother showing the 'deleted' jobs
-        job_details = redis.hgetall('job:%s' % job_id)
+        job_details = redis.hgetall(jobkey(job_id))
         job_details['submitted'] = nicetimedelta(job_details['submitted'])
         job_details['status'] = job.get_status()
         jobs.append(job_details)
@@ -103,12 +112,14 @@ def queued_job_info():
 
 
 def sizeof_fmt(num, suffix='B'):
-    """Happily used from http://stackoverflow.com/a/1094933"""
+    """Graciously provided by http://stackoverflow.com/a/1094933
+
+    Minor modification: Use base 10 sizes instead of SI units."""
     for unit in ['','K','M','G','T','P','E','Z']:
         if abs(num) < 1000.0:
             return "%3.1f%s%s" % (num, unit, suffix)
         num /= 1000.0
-    return "%.1f%s%s" % (num, 'Yi', suffix)
+    return "%.1f%s%s" % (num, 'Y', suffix)
 
 
 def downloaded_files_info():
