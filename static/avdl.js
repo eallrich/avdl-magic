@@ -1,3 +1,13 @@
+/* Init */
+
+log.setDefaultLevel('info');
+log.info("Initializing avdl.js");
+
+/* Returns a pretty string representation of the given object */
+var dump = function(object) {
+    return JSON.stringify(object, null 4);
+};
+
 /* =============== */
 /* jquery elements */
 /* =============== */
@@ -13,8 +23,8 @@ $(function() {
 var avdlApp = angular.module('avdlApp', []);
 
 avdlApp.controller('avdlController',
-    ['$scope', '$log', '$http', '$timeout',
-    function($scope, $log, $http, $timeout) {
+    ['$scope', '$http', '$timeout',
+    function($scope, $http, $timeout) {
 
     $scope.alerts = [];
     $scope.jobs = [];
@@ -33,47 +43,31 @@ avdlApp.controller('avdlController',
         $scope.alerts.push(alertObject);
     }
 
-    /* == Logging utilities == */
-
-    /* Core logging function*/
-    var log = function(who, text) {
-        $log.log('[' + who + '] ' + text);
-    }
-
-    /* Logging an HTTP response */
-    var log_response = function(who, response, text) {
-        message = '=> ' + response.status + ' ' + response.statusText + '. ' + text;
-        log(who, message);
-    }
-
-    /* Logging an HTTP response with an object */
-    var log_response_object = function(who, response, text, object) {
-        message = text + "\n\t" + JSON.stringify(object);
-        log_response(who, response, message);
-    }
-
     /* Submits the user's URL to the server for processing */
     $scope.enqueue = function() {
+        var logger = log.getLogger('Enqueue');
+        var input_url = '';
+
         clearAlertsFrom('enqueue');
-        log('Enqueue', 'Requesting "' + $scope.input_url + '"');
+        logger.info('Requesting "', $scope.input_url, '"');
         // UX: Ensure focus returns to the URL input field
         $("#input_url").focus();
 
         if($scope.input_url === '') {
-            log('Enqueue', 'Rejecting empty URL');
+            logger.warn('Rejecting empty URL');
             return;
         }
 
         // UX: Save the input value and then clear the control
-        var input_url = $scope.input_url;
+        input_url = $scope.input_url;
         $scope.input_url = '';
 
         $http.post('/api/enqueue', {'input_url': input_url}).then(
             function success(r) {
-                log_response_object('Enqueue', r, "New job ID:", r.data);
+                logger.info('=> ', r.status, 'New job ID:\n', dump(r.data));
                 watcher();
             }, function error(r) {
-                log_response("Enqueue", r, "Error: " + r.data.error);
+                logger.error('=> ', r.status, '\n', dump(r.data));
                 createAlert('enqueue', 'warning', r.data.error);
                 if('info' in r.data) {
                     createAlert('enqueue', 'info', r.data.info);
@@ -110,11 +104,12 @@ avdlApp.controller('avdlController',
     var watcher_instance = false;
     /* Polls the status endpoint for queue & download updates */
     var watcher = function() {
+        var logger = log.getLogger('Watcher');
         clearAlertsFrom('watcher');
 
         /* Singleton handling */
         if(watcher_instance == true) {
-            log('Watcher', 'Instance already running, aborting');
+            logger.warning('Instance already running, aborting');
             return;
         } else {
             watcher_instance = true;
@@ -132,11 +127,11 @@ avdlApp.controller('avdlController',
                     $timeout(watcher, 1000); // milliseconds
                 } else {
                     watcher_instance = false;
-                    log('Watcher', 'No active jobs, ceasing');
+                    logger.info('No active jobs, ceasing');
                 }
             }, function error(r) {
                 watcher_instance = false;
-                log_response_object("Watcher", r, "Data:", r.data);
+                logger.error('=> ', r.status, '\n', dump(r.data));
                 createAlert('watcher', 'danger', "There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(");
                 createAlert('watcher', 'warning', "The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.");
             });
