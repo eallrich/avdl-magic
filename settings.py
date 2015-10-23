@@ -20,5 +20,5 @@ logging = {
 # redis
 # -----
 redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
-jobkey = lamda id: 'job:%s' % id
+jobkey = lambda id: 'job:%s' % id
 joblist = 'alljobs'
