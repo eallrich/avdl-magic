@@ -14,6 +14,7 @@ from rq import get_current_job, Queue
 from rq.job import Job
 
 import settings
+import util
 
 logging.basicConfig(**settings.logging)
 logger = logging.getLogger(__name__)
@@ -30,31 +31,6 @@ try:
 except OSError:
     # Already exists
     pass
-
-def download(yturl):
-    """Our workhorse function. Calls youtube-dl to do our dirty work."""
-    # Start with getting the title
-    r = requests.get(yturl)
-    tree = lxml.html.fromstring(r.content)
-    title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
-    job_id = get_current_job().get_id()
-    redis.hset('job:%s' % job_id, 'page_title', title)
-    # Then get the video
-    options = [
-        'youtube-dl',
-        '--default-search=ytsearch:',
-        '--restrict-filenames',
-        '--format=bestaudio',
-        '--extract-audio',
-        '--audio-format=mp3',
-        '--audio-quality=1',
-        '--output=downloads/%(title)s-%(id)s.%(ext)s',
-        '--no-mtime',
-        yturl,
-    ]
-    #logger.info("Running with options:\n    %s" % ' '.join(options))
-    call(options, shell=False)
-    return "Done"
 
 
 def nicetimedelta(ts):
@@ -164,7 +140,7 @@ def enqueue():
 
     logger.info("Accepting /api/enqueue request for %s" % clean_url)
     job = rqueue.enqueue_call(
-        func=download,
+        func=util.download,
         args=(clean_url,),
         result_ttl=900 # 15 minutes
     )
@@ -207,7 +183,7 @@ def job_details(job_id):
         return json.dumps({'status': job.get_status()})
     except:
         response = {
-            'error': "No info. Probably deleted?",
+            'error': "No info, probably deleted.",
         }
         return json.dumps(response), 404 # not found
 
@@ -216,5 +192,5 @@ def job_details(job_id):
 def flushredis():
     logger.info("Received request to flush redis")
     redis.flushall()
-    return "Success"
+    return "Done"
 
