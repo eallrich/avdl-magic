@@ -3,7 +3,7 @@
 /* =============== */
 
 $(function() {
-    $("#yturl").focus();
+    $("#input_url").focus();
 });
 
 /* =================== */
@@ -55,20 +55,20 @@ avdlApp.controller('avdlController',
     /* Submits the user's URL to the server for processing */
     $scope.enqueue = function() {
         clearAlertsFrom('enqueue');
-        log('Enqueue', 'Requesting "' + $scope.yturl + '"');
+        log('Enqueue', 'Requesting "' + $scope.input_url + '"');
         // UX: Ensure focus returns to the URL input field
-        $("#yturl").focus();
+        $("#input_url").focus();
 
-        if($scope.yturl === '') {
+        if($scope.input_url === '') {
             log('Enqueue', 'Rejecting empty URL');
             return;
         }
 
         // UX: Save the input value and then clear the control
-        var yturl = $scope.yturl;
-        $scope.yturl = '';
+        var input_url = $scope.input_url;
+        $scope.input_url = '';
 
-        $http.post('/api/enqueue', {'yturl': yturl}).then(
+        $http.post('/api/enqueue', {'input_url': input_url}).then(
             function success(r) {
                 log_response_object('Enqueue', r, "New job ID:", r.data);
                 watcher();

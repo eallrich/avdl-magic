@@ -31,20 +31,20 @@ def index():
 @app.route('/api/enqueue', methods=['POST',])
 def enqueue():
     data = json.loads(request.data.decode())
-    if 'yturl' not in data:
+    if 'input_url' not in data:
         response = {
-            'error': "The Youtube URL to download must be provided as 'yturl'",
+            'error': "The Youtube URL to download must be provided as 'input_url'",
         }
-        logger.warn("Rejecting /api/enqueue request missing 'yturl'")
+        logger.warn("Rejecting /api/enqueue request missing 'input_url'")
         return json.dumps(response), 400 # bad request
 
-    clean_url = util.validate_url(data['yturl'])
+    clean_url = util.validate_url(data['input_url'])
     if clean_url is None:
         response = {
             'error': "I'm sorry, that doesn't really look like a Youtube URL. :-(",
             'info': "Please try again using a link starting with 'https://www.youtube.com'.",
         }
-        logger.warn("Rejecting /api/enqueue request for %s" % data['yturl'])
+        logger.warn("Rejecting /api/enqueue request for %s" % data['input_url'])
         return json.dumps(response), 403 # forbidden
 
     logger.info("Accepting /api/enqueue request for %s" % clean_url)

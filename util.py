@@ -22,20 +22,20 @@ jobkey = settings.jobkey
 joblist = settings.joblist
 
 
-def set_title(job_id, yturl):
-    """Sets the job's page_title field using the yturl's <title>."""
-    r = requests.get(yturl)
+def set_title(job_id, url):
+    """Sets the job's page_title field using the url's <title>."""
+    r = requests.get(url)
     tree = lxml.html.fromstring(r.content)
     title = tree.findtext('.//title')[:-10] # Removing suffix: " - YouTube"
     redis.hset(jobkey(job_id), 'page_title', title)
 
 
-def download(yturl):
+def download(url):
     """Our workhorse function. Calls youtube-dl to do our dirty work."""
     job_id = get_current_job().get_id()
     destination = os.path.join(settings.download_dir, "%(title)s.%(ext)s")
     # Start with getting the page title
-    set_title(job_id, yturl)
+    set_title(job_id, url)
     # Then get the video
     options = [
         'youtube-dl',
@@ -47,7 +47,7 @@ def download(yturl):
         '--audio-quality=1',
         '--output=%s' % destination,
         '--no-mtime',
-        yturl,
+        url,
     ]
     call(options, shell=False)
     return "Done"
