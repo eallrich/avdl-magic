@@ -82,7 +82,11 @@ def status():
 @app.route('/download/<path:filename>')
 def download_file(filename):
     """Simple and sufficient. Lets a user download a file we've pulled in."""
-    return send_from_directory(util.download_dir, filename, as_attachment=True)
+    return send_from_directory(
+                settings.download_dir,
+                filename,
+                as_attachment=True
+            )
 
 
 @app.route('/api/jobs/<job_id>')
