@@ -90,7 +90,7 @@ ytdlApp.controller('ytdlController',
                 return true;
             }
             return false;
-        }
+        });
     };
 
     /* Adds label style information to each job object */
@@ -103,7 +103,7 @@ ytdlApp.controller('ytdlController',
         };
         jobs.forEach(function(job) {
             job.label = labelStyleMap[job.status];
-        }
+        });
     };
 
     /* Singleton instance for the watcher */
