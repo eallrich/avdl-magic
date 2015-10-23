@@ -103,9 +103,9 @@ ytdlApp.controller('ytdlController',
             error(function(r) {
                 watcher_instance = false;
                 $log.log("[Watcher] => " + r.status + " " + r.statusText + ". Data:\n\t" + r.data);
-                alertObject = {style:'error', text:"There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(", creator:'watcher'};
+                alertObject = {style:'danger', text:"There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(", creator:'watcher'};
                 $scope.alerts.push(alertObject);
-                alertObject = {style:'warning', text:"The 'Queued Requests' and 'Completed Downloads' aren't going to be accurate.", creator:'watcher'};
+                alertObject = {style:'warning', text:"The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.", creator:'watcher'};
                 $scope.alerts.push(alertObject);
             });
     };
