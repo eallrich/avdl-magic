@@ -54,6 +54,7 @@ def download(yturl):
 
 
 def nicetimedelta(ts):
+    """Return human-friendly timedelta strings for "now() - ts""""
     old_datetime = datetime.datetime.fromtimestamp(float(ts))
     now = datetime.datetime.now()
     difference = now - old_datetime
@@ -99,6 +100,12 @@ def validate_url(url):
 
 
 def queued_job_info():
+    """Provides metadata for all known jobs.
+
+    Returns a list of dictionaries:
+        [ {job_id, request_url, submitted, page_title, status},
+          ...,
+        ]"""
     jobs = []
     # Show the ten most recent jobs
     for job_id in redis.lrange(joblist, 0, 9):
@@ -124,6 +131,12 @@ def sizeof_fmt(num, suffix='B'):
 
 
 def downloaded_files_info():
+    """Provides metadata for all known downloads.
+
+    Returns a list of dictionaries:
+        [ {name, modified, size, url},
+          ...,
+        ]"""
     files = get_files_available()
     url = lambda x: url_for('download_file', filename=x)
     files_with_urls = [{
