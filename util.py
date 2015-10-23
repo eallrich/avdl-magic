@@ -7,7 +7,7 @@ from flask import url_for
 import lxml.html
 import redis
 import requests
-from rq import get_current_job
+from rq import get_current_job, Queue
 
 import settings
 
@@ -16,6 +16,7 @@ logging.basicConfig(**settings.logging)
 logger = logging.getLogger(__name__)
 
 redis = redis.from_url(settings.redis_url)
+rqueue = Queue(connection=redis)
 # Convenience
 jobkey = settings.jobkey
 joblist = settings.joblist
