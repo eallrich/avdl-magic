@@ -6,7 +6,6 @@ $(function() {
     $("#yturl").focus();
 });
 
-
 /* =================== */
 /* angular-js Elements */
 /* =================== */
@@ -21,92 +20,125 @@ ytdlApp.controller('ytdlController',
     $scope.jobs = [];
     $scope.downloaded = [];
 
+    /* Filters out alerts created by the specified actor, leaves the rest */
     var clearAlertsFrom = function(creator) {
         $scope.alerts = $scope.alerts.filter(function(element, index, array) {
             return element.creator != creator;
         });
     };
 
+    /* Creates an alert with the given parameters */
+    var createAlert = function(creator, style, text) {
+        alertObject = {creator:creator, style:style, text:text};
+        $scope.alerts.push(alertObject);
+    }
+
+    /* == Logging utilities == */
+
+    /* Core logging function*/
+    var log = function(who, text) {
+        $log.log('[' + who + '] ' + text);
+    }
+
+    /* Logging an HTTP response */
+    var log_response = function(who, response, text) {
+        message = '=> ' + response.status + ' ' + r.statusText + '. ' + text;
+        log(who, message);
+    }
+
+    /* Logging an HTTP response with an object */
+    var log_response_object = function(who, response, text, object) {
+        message = text + "\n\t" + JSON.stringify(object);
+        log_response(who, response, message);
+    }
+
+    /* Submits the user's URL to the server for processing */
     $scope.enqueue = function() {
         clearAlertsFrom('enqueue');
-        $log.log('[Enqueue] Requesting "' + $scope.yturl + '"');
-        // Ensure focus returns to the URL input field for better UX
+        log('Enqueue', 'Requesting "' + $scope.yturl + '"');
+        // UX: Ensure focus returns to the URL input field
         $("#yturl").focus();
+
         if($scope.yturl === '') {
-            $log.log('[Enqueue] Rejecting empty URL');
+            log('Enqueue', 'Rejecting empty URL');
             return;
         }
 
+        // UX: Save the input value and then clear the control
         var yturl = $scope.yturl;
         $scope.yturl = '';
+
         $http.post('/api/enqueue', {'yturl': yturl}).then(
             function success(r) {
-                $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". New job ID: " + r.data);
+                log_response_object('Enqueue', r, "New job ID:", r.data);
                 watcher();
             }, function error(r) {
-                $log.log("[Enqueue] => " + r.status + " " + r.statusText + ". Error: " + r.data.error);
-                alertObject = {style:'warning', text:r.data.error, creator:'enqueue'};
-                $scope.alerts.push(alertObject);
-
+                log_response("Enqueue", r, "Error: " + r.data.error);
+                createAlert('enqueue', 'warning', r.data.error);
                 if('info' in r.data) {
-                    alertObject = {style:'info', text:r.data.info, creator:'enqueue'};
-                    $scope.alerts.push(alertObject);
+                    createAlert('enqueue', 'info', r.data.info);
                 }
             });
     };
 
+    /* Returns true if there are any active jobs on the server; else false. */
     $scope.anythingActive = function() {
-        for(var i = 0; i < $scope.jobs.length; i++) {
-            // RQ job states: ['queued', 'started', 'finished', 'failed']
-            if($scope.jobs[i].status === "started" || $scope.jobs[i].status === "queued") {
+        // RQ job states: ['queued', 'started', 'finished', 'failed']
+        return $scope.jobs.some(function(job) {
+            if( job.status === "started" ||
+                job.status === "queued") {
                 return true;
             }
-        }
-        return false;
-    };
-
-    var mapLabels = {
-        "queued": "info",
-        "started": "primary",
-        "finished": "success",
-        "failed": "danger",
-        "deleted": "default" // Defined by YTDL, not an RQ job state
-    };
-    var finishingTouches = function(jobs) {
-        for(var i = 0; i < jobs.length; i++) {
-            jobs[i].label = mapLabels[jobs[i].status];
+            return false;
         }
     };
 
+    /* Adds label style information to each job object */
+    var populateJobLabels = function(jobs) {
+        var labelStyleMap = {
+            "queued": "info",
+            "started": "primary",
+            "finished": "success",
+            "failed": "danger"
+        };
+        jobs.forEach(function(job) {
+            job.label = labelStyleMap[job.status];
+        }
+    };
+
+    /* Singleton instance for the watcher */
     var watcher_instance = false;
+    /* Polls the status endpoint for queue & download updates */
     var watcher = function() {
         clearAlertsFrom('watcher');
+
+        /* Singleton handling */
         if(watcher_instance == true) {
-            $log.log('[Watcher] Instance already running, aborting');
+            log('Watcher', 'Instance already running, aborting');
             return;
         } else {
             watcher_instance = true;
         }
-        $http.get('/api/status').
-            success(function(data) {
-                $scope.jobs = data.jobs
-                $scope.downloaded = data.files
-                finishingTouches($scope.jobs);
+
+        $http.get('/api/status').then(
+            function success(r) {
+                $scope.jobs = r.data.jobs
+                $scope.downloaded = r.data.files
+                populateJobLabels($scope.jobs);
+
+                /* Don't waste bandwidth if nothing's happening */
                 if($scope.anythingActive()) {
                     watcher_instance = false
                     $timeout(watcher, 1000); // milliseconds
                 } else {
                     watcher_instance = false;
-                    $log.log('[Watcher] No active jobs, ceasing');
+                    log('Watcher', 'No active jobs, ceasing');
                 }
-            }).
-            error(function(r) {
+            }, function error(r) {
                 watcher_instance = false;
-                $log.log("[Watcher] => " + r.status + " " + r.statusText + ". Data:\n\t" + r.data);
-                alertObject = {style:'danger', text:"There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(", creator:'watcher'};
-                $scope.alerts.push(alertObject);
-                alertObject = {style:'warning', text:"The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.", creator:'watcher'};
-                $scope.alerts.push(alertObject);
+                log_response_object("Watcher", r, "Data:", r.data);
+                createAlert('watcher', 'danger', "There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(");
+                createAlert('watcher', 'warning', "The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.");
             });
     };
 
