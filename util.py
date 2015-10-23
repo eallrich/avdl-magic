@@ -54,7 +54,7 @@ def download(yturl):
 
 
 def nicetimedelta(ts):
-    """Return human-friendly timedelta strings for "now() - ts""""
+    """Return human-friendly timedelta strings for 'now() - ts'"""
     old_datetime = datetime.datetime.fromtimestamp(float(ts))
     now = datetime.datetime.now()
     difference = now - old_datetime
