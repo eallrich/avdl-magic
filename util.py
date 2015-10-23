@@ -66,7 +66,7 @@ def nicetimedelta(ts):
         return "%d minutes ago" % int(difference.seconds / 60)
 
 
-def get_files_available(where=settings.destination_dir, extension='.mp3'):
+def get_files_available(where=settings.download_dir, extension='.mp3'):
     """Provides metadata for any files available for download.
 
     Returns a list of three-element lists:
