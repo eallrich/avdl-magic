@@ -58,10 +58,8 @@ def nicetimedelta(ts):
     old_datetime = datetime.datetime.fromtimestamp(float(ts))
     now = datetime.datetime.now()
     difference = now - old_datetime
-    if difference.seconds < 3: # don't show '0 seconds ago'
+    if difference.seconds < 60: # don't show '0 minutes ago'
         return "just now"
-    elif difference.seconds < 60: # don't show '0 minutes ago'
-        return "%d seconds ago" % difference.seconds
     elif difference.seconds < 120: # use singular 'minute'
         return "1 minute ago"
     else:
