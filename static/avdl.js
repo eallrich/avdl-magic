@@ -45,16 +45,15 @@ avdlApp.controller('avdlController',
 
     /* Submits the user's URL to the server for processing */
     $scope.enqueue = function() {
-        var logger = log.getLogger('Enqueue');
         var input_url = '';
 
         clearAlertsFrom('enqueue');
-        logger.info('Requesting "', $scope.input_url, '"');
+        log.info('Requesting', $scope.input_url);
         // UX: Ensure focus returns to the URL input field
         $("#input_url").focus();
 
         if($scope.input_url === '') {
-            logger.warn('Rejecting empty URL');
+            log.warn('Rejecting empty URL');
             return;
         }
 
@@ -64,10 +63,10 @@ avdlApp.controller('avdlController',
 
         $http.post('/api/enqueue', {'input_url': input_url}).then(
             function success(r) {
-                logger.info('=> ', r.status, 'New job ID:\n', dump(r.data));
+                log.info('=>', r.status, 'New job ID:\n', dump(r.data));
                 watcher();
             }, function error(r) {
-                logger.error('=> ', r.status, '\n', dump(r.data));
+                log.warning('=>', r.status, '\n', dump(r.data));
                 createAlert('enqueue', 'warning', r.data.error);
                 if('info' in r.data) {
                     createAlert('enqueue', 'info', r.data.info);
@@ -104,12 +103,11 @@ avdlApp.controller('avdlController',
     var watcher_instance = false;
     /* Polls the status endpoint for queue & download updates */
     var watcher = function() {
-        var logger = log.getLogger('Watcher');
         clearAlertsFrom('watcher');
 
         /* Singleton handling */
         if(watcher_instance == true) {
-            logger.warning('Instance already running, aborting');
+            log.info('Instance already running, aborting');
             return;
         } else {
             watcher_instance = true;
@@ -127,11 +125,11 @@ avdlApp.controller('avdlController',
                     $timeout(watcher, 1000); // milliseconds
                 } else {
                     watcher_instance = false;
-                    logger.info('No active jobs, ceasing');
+                    log.info('No active jobs, ceasing');
                 }
             }, function error(r) {
                 watcher_instance = false;
-                logger.error('=> ', r.status, '\n', dump(r.data));
+                log.warning('=>', r.status, '\n', dump(r.data));
                 createAlert('watcher', 'danger', "There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(");
                 createAlert('watcher', 'warning', "The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.");
             });
