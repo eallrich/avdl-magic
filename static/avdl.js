@@ -5,7 +5,7 @@ log.info("Initializing avdl.js");
 
 /* Returns a pretty string representation of the given object */
 var dump = function(object) {
-    return JSON.stringify(object, null 4);
+    return JSON.stringify(object, null, 4);
 };
 
 /* =============== */
