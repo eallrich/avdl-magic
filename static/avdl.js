@@ -66,7 +66,7 @@ avdlApp.controller('avdlController',
                 log.info('=>', r.status, 'New job ID:\n', dump(r.data));
                 watcher();
             }, function error(r) {
-                log.warning('=>', r.status, '\n', dump(r.data));
+                log.warn('=>', r.status, '\n', dump(r.data));
                 createAlert('enqueue', 'warning', r.data.error);
                 if('info' in r.data) {
                     createAlert('enqueue', 'info', r.data.info);
@@ -129,7 +129,7 @@ avdlApp.controller('avdlController',
                 }
             }, function error(r) {
                 watcher_instance = false;
-                log.warning('=>', r.status, '\n', dump(r.data));
+                log.warn('=>', r.status, '\n', dump(r.data));
                 createAlert('watcher', 'danger', "There's a problem on the server: It's not resonding to status requests. I'm sorry. :-(");
                 createAlert('watcher', 'warning', "The 'Queued Requests' and 'Completed Downloads' lists aren't going to be accurate.");
             });
