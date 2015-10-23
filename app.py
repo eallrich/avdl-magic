@@ -76,8 +76,7 @@ def status():
         'jobs': util.queued_job_info(),
         'files': util.downloaded_files_info(),
     }
-    #return json.dumps(response)
-    return 'Internal Server Error', 500
+    return json.dumps(response)
 
 
 @app.route('/download/<path:filename>')
