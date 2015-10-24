@@ -20,22 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 log.setDefaultLevel('info');
 log.info("Initializing avdl.js");
 
+$(function () {
+    $("#input_url").focus();
+    /* Bootstrap Tooltip API is opt-in */
+    $('[data-toggle="tooltip"]').tooltip()
+})
+
 /* Returns a pretty string representation of the given object */
 var dump = function(object) {
     return JSON.stringify(object, null, 4);
 };
 
-/* =============== */
-/* jquery elements */
-/* =============== */
-
-$(function() {
-    $("#input_url").focus();
-});
-
-/* =================== */
-/* angular-js Elements */
-/* =================== */
+/* ================== */
+/* AngularJS Elements */
+/* ================== */
 
 var avdlApp = angular.module('avdlApp', []);
 

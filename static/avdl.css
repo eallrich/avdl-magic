@@ -25,7 +25,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     color: rgb(77, 14, 179); /* deep purple */
 }
 
-/* via http://stackoverflow.com/a/26228354 */
+
+/* Footer styles via http://getbootstrap.com/examples/sticky-footer/ */
+html {
+    min-height: 100%;
+    position: relative;
+}
+
+body {
+    /* Margin on the bottom must match footer height */
+    margin-bottom: 40px;
+}
+
+.footer {
+    background-color: rgb(199, 168, 247); /* light purple */
+    bottom: 0;
+    height: 40px;
+    position: absolute;
+    width: 100%
+}
+
+
+/* Rotating glyphicons via http://stackoverflow.com/a/26228354 */
 .glyphicon-spin {
     -webkit-animation: spin 1000ms infinite linear;
     animation: spin 1000ms infinite linear;
