@@ -1,10 +1,27 @@
+{# avdl-magic: A perhaps not-so-magical audio/video download assistant.
+Copyright (C) 2015  Evan Allrich
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#}
+
 {%- extends "base.html" %}
 
 {% block content %}
   <div class="container">
-    <div class="jumbotron" style="background-color: rgb(199, 168, 247);">
+    <div id="jumbotron" class="jumbotron">
       <h2>Hello! This is Magic. :-)</h2>
-      <p>Made with <span class="glyphicon glyphicon-heart" style="color: rgb(77, 14, 179);"></span> to help you turn Youtube videos into .mp3 files.<br />Simply enter a Youtube URL, click 'Get!', and then watch the magical robots do their work. <span class="glyphicon glyphicon-send" style="color: rgb(77, 14, 179);"></span></p>
+      <p>Made with <span class="glyphicon glyphicon-heart darker-text"></span> to help you turn YouTube videos into .mp3 files.<br />Simply enter a YouTube URL, click 'Get!', and then watch the magical robots do their work.</p>
       <div class="row" ng-show="alerts.length">
         <div class="col-md-7">
           {% raw %}
@@ -17,7 +34,7 @@
       <form role="form" ng-submit="enqueue()">
         <div class="row">
           <div class="col-lg-6">
-          <input id="input_url" type="text" class="form-control input-lg" name="input_url" ng-model="input_url" size=40 placeholder="Enter a Youtube URL" />
+          <input id="input_url" type="text" class="form-control input-lg" name="input_url" ng-model="input_url" size=40 placeholder="Enter a YouTube URL" />
           </div>
           <button class="btn btn-lg btn-primary">
             <span class="glyphicon glyphicon-cloud-download"></span> Get!
@@ -29,7 +46,7 @@
 
     <div class="row">
     <div class="panel panel-info">
-    <div class="panel-heading">Queued Requests <abbr title="Shows Queued, Started, and Finished download requests. These disappear after 15 minutes."><span class="glyphicon glyphicon-info-sign"></span></abbr><span ng-show="anythingActive()" class="glyphicon glyphicon-refresh glyphicon-spin pull-right"></span></div>
+    <div class="panel-heading">Queued Requests <span class="glyphicon glyphicon-info-sign" title="Shows Queued, Started, and Finished download requests. These disappear after 15 minutes."></span><span ng-show="anythingActive()" class="glyphicon glyphicon-refresh glyphicon-spin pull-right"></span></div>
     <table class="table table-striped">
       <thead><tr>
         <th>Submitted</th>
@@ -61,7 +78,7 @@
 
     <div class="row">
     <div class="panel panel-success">
-    <div class="panel-heading">Completed Downloads <abbr title="Files ready to be downloaded by you. These disappear after ~1 hour of inactivity."><span class="glyphicon glyphicon-info-sign"></span></abbr><span ng-show="anythingActive()" class="glyphicon glyphicon-refresh glyphicon-spin pull-right"></span></div>
+    <div class="panel-heading">Completed Downloads <span class="glyphicon glyphicon-info-sign" title="Files ready to be downloaded by you. These disappear after ~1 hour of inactivity."></span><span ng-show="anythingActive()" class="glyphicon glyphicon-refresh glyphicon-spin pull-right"></span></div>
     <table class="table table-striped">
       <thead><tr>
         <th>Name</th>
