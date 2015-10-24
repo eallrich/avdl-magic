@@ -45,6 +45,10 @@ body {
     width: 100%
 }
 
+.footer-text {
+    margin-top: 10; /* vertically center the text */
+}
+
 
 /* Rotating glyphicons via http://stackoverflow.com/a/26228354 */
 .glyphicon-spin {
