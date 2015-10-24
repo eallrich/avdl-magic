@@ -44,6 +44,8 @@ avdlApp.controller('avdlController',
     $scope.alerts = [];
     $scope.jobs = [];
     $scope.downloaded = [];
+    $scope.submitText = "Get!";
+    $scope.submitting = false;
 
     /* Filters out alerts created by the specified actor, leaves the rest */
     var clearAlertsFrom = function(creator) {
@@ -75,6 +77,8 @@ avdlApp.controller('avdlController',
         // UX: Save the input value and then clear the control
         input_url = $scope.input_url;
         $scope.input_url = '';
+        $scope.submitText = "Getting...";
+        $scope.submitting = true;
 
         $http.post('/api/enqueue', {'input_url': input_url}).then(
             function success(r) {
@@ -87,6 +91,8 @@ avdlApp.controller('avdlController',
                     createAlert('enqueue', 'info', r.data.info);
                 }
             });
+        $scope.submitText = "Get!";
+        $scope.submitting = false;
     };
 
     /* Returns true if there are any active jobs on the server; else false. */

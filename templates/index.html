@@ -36,8 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
           <div class="col-lg-6">
           <input id="input_url" type="text" class="form-control input-lg" name="input_url" ng-model="input_url" size=40 placeholder="Enter a YouTube URL" />
           </div>
-          <button class="btn btn-lg btn-primary">
-            <span class="glyphicon glyphicon-cloud-download"></span> Get!
+          <button class="btn btn-lg btn-primary" ng-disable="submitting">
+            <span class="glyphicon glyphicon-cloud-download"></span> {% raw %}{{ submitText }}{% endraw %}
           </button>
         </div>
       </form>
