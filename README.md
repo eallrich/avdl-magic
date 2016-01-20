@@ -2,11 +2,17 @@ avdl-magic
 ==========
 A perhaps not-so-magical audio/video download assistant.
 
+![Screenshot of a fresh instance](/docs/fresh.jpg?raw=true "A freshly loaded instance")
+
 Purpose
 -------
 Exposes some of the power of youtube-dl in a simple web UI with the intent that
-it enable a casual end user to easily retrieve the audio from a Youtube video
+it enable a casual end user to easily retrieve the audio from a YouTube video
 as an .mp3 file.
+
+Heads-up! Copyright infringement is serious business and can come with legal
+consequences. This program comes with ABSOLUTELY NO WARRANTY; for details
+see [the license](/LICENSE). Please use this software responsibly.
 
 Deploying to Heroku
 -------------------
