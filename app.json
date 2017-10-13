@@ -1,11 +1,8 @@
 {
   "name": "avdl-magic",
   "description": "A perhaps not-so-magical audio/video download assistant.",
-  "keywords": [],
-  "website": "https://github.com/eallrich/avdl-magic",
   "repository": "https://github.com/eallrich/avdl-magic",
-  "success_url": "https://github.com/eallrich/avdl-magic",
-  "env": {},
+  "success_url": "/",
   "formation": {
     "web": {
       "quantity": 1,
