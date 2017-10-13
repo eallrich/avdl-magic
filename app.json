@@ -1,0 +1,24 @@
+{
+  "name": "avdl-magic",
+  "description": "A perhaps not-so-magical audio/video download assistant.",
+  "keywords": [],
+  "website": "https://github.com/eallrich/avdl-magic",
+  "repository": "https://github.com/eallrich/avdl-magic",
+  "success_url": "https://github.com/eallrich/avdl-magic",
+  "env": {},
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    "heroku-redis:hobby-dev"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/heroku/heroku-buildpack-python"
+    }
+  ]
+}
+
