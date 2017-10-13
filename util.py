@@ -56,6 +56,10 @@ def download(url):
     # Then get the video
     options = [
         'youtube-dl',
+        # Careful with these options. The worker has trouble when the args
+        # contain spaces (e.g. --opt foo). Instead, use an equals sign between
+        # the arg name and the value (e.g. --opt=foo).
+        '--ffmpeg-location=/app/ffmpeg/',
         '--default-search=ytsearch:',
         '--restrict-filenames',
         '--format=bestaudio',
@@ -66,6 +70,7 @@ def download(url):
         '--no-mtime',
         url,
     ]
+    print("Running: %s" % ' '.join(options))
     call(options, shell=False)
     return "Done"
 

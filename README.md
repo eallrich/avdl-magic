@@ -16,16 +16,19 @@ see [the license](/LICENSE). Please use this software responsibly.
 
 Deploying to Heroku
 -------------------
-The easiest deployment option is through Heroku using the Redistogo addon. To
-follow these steps, you'll need the [Heroku Toolbelt](https://toolbelt.heroku.com/)
-installed.
+[![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic)
+
+The easiest deployment option is through Heroku using the 'click to deploy'
+button, above. It will automate the steps below. You can also follow along with
+these commands if you would prefer to deploy manually. You'll just need to have
+the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```shell
 $ git clone https://github.com/eallrich/avdl-magic.git
 $ cd avdl-magic
 $ heroku create
-# The free 5MB plan will be sufficient for our purposes
-$ heroku addons:create redistogo:nano
+# The free 25MB plan will be more than sufficient for our purposes
+$ heroku addons:create heroku-redis:hobby-dev
 # This 'git push' will take a while due to the included ffmpeg binary blobs
 $ git push heroku master
 $ heroku open
