@@ -19,9 +19,9 @@ Deploying to Heroku
 [![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic/tree/heroku_button)
 
 The easiest deployment option is through Heroku using the 'click to deploy'
-button, above. It will automate the steps below. you can also follow along with
-these commands if you would prefer to deploy manually. To follow these steps,
-you'll need the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+button, above. It will automate the steps below. You can also follow along with
+these commands if you would prefer to deploy manually. You'll just need to have
+the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
 ```shell
 $ git clone https://github.com/eallrich/avdl-magic.git
