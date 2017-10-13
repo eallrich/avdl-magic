@@ -16,7 +16,7 @@ see [the license](/LICENSE). Please use this software responsibly.
 
 Deploying to Heroku
 -------------------
-[![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic)
+[![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic/tree/heroku_button)
 
 The easiest deployment option is through Heroku using the Redistogo addon. To
 follow these steps, you'll need the [Heroku Toolbelt](https://toolbelt.heroku.com/)
