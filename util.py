@@ -64,6 +64,7 @@ def download(url):
         '--audio-quality=1',
         '--output=%s' % destination,
         '--no-mtime',
+        '--ffmpeg-location /app/ffmpeg/',
         url,
     ]
     call(options, shell=False)
