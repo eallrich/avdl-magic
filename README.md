@@ -16,7 +16,7 @@ see [the license](/LICENSE). Please use this software responsibly.
 
 Deploying to Heroku
 -------------------
-[![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic/tree/heroku_button)
+[![Deploy to Heroku button](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/eallrich/avdl-magic)
 
 The easiest deployment option is through Heroku using the 'click to deploy'
 button, above. It will automate the steps below. You can also follow along with
