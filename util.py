@@ -56,7 +56,7 @@ def download(url):
     # Then get the video
     options = [
         'youtube-dl',
-        '--ffmpeg-location /app/ffmpeg/',
+        '--ffmpeg-location=/app/ffmpeg/',
         '--default-search=ytsearch:',
         '--restrict-filenames',
         '--format=bestaudio',
