@@ -12,4 +12,4 @@ lxml==3.4.4
 redis==2.10.3
 requests==2.8.1
 rq==0.5.6
-youtube-dl==2016.11.2
+youtube-dl==2017.10.12
