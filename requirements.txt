@@ -10,7 +10,7 @@ gunicorn==19.9.0
 honcho==1.0.1
 idna==2.8
 itsdangerous==1.1.0
-lxml==3.8.0
+lxml==4.6.3
 redis==3.3.8
 requests==2.22.0
 rq==1.1.0
